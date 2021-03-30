@@ -10,7 +10,7 @@ export default class Options {
   #siteUrlValue = ''
   #serverUrlValue = ''
   #vapidPublicKeyValue = ''
-  #tokenHeaderValue = ''
+  #tokenHeaderValue = 'Bearer'
   #tokenValue = ''
   #enabledValue = true
   #unregisterConflictsValue = false

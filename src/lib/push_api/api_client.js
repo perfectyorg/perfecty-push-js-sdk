@@ -1,3 +1,5 @@
+import Logger from '../logger'
+
 export default class ApiClient {
   #options
 
@@ -6,47 +8,60 @@ export default class ApiClient {
   }
 
   async register (pushSubscription) {
-    const path = this.#options.siteUrl + '/v1/public/users'
+    Logger.info('Registering user in the server')
+
+    const path = `${this.#options.serverUrl}/v1/public/users`
     const bodyContent = JSON.stringify({
       user: pushSubscription
     })
 
     const body = await fetch(path, {
-      method: 'put',
+      method: 'post',
       headers: this.#getHeaders(),
       body: bodyContent
     })
     const response = await body.json()
+    Logger.debug('response', response)
+
     if (response && response.success && response.success === true) {
+      Logger.info('The user was registered successfully')
       return response
     } else {
+      Logger.error('The user could not be registered')
       return false
     }
   }
 
   async updatePreferences (userId, isActive) {
-    const path = `${this.#options.siteUrl}/public/users/${userId}/preferences`
+    Logger.info('Updating user preferences')
+    Logger.debug(`User: ${userId}, isActive: ${isActive}`)
+
+    const path = `${this.#options.serverUrl}/v1/public/users/${userId}/preferences`
     const bodyContent = JSON.stringify({
       user_id: userId,
       is_active: isActive
     })
 
     const body = await fetch(path, {
-      method: 'put',
+      method: 'post',
       headers: this.#getHeaders(),
       body: bodyContent
     })
     const response = await body.json()
+    Logger.debug('response', response)
+
     if (response && response.success && response.success === true) {
+      Logger.info('The user preferences were changed')
       return true
     } else {
+      Logger.info('The user preferences could not be changed')
       return false
     }
   }
 
   #getHeaders () {
     const headers = {
-      'Content-type': 'application/json'
+      'Content-Type': 'application/json'
     }
     headers[this.#options.tokenHeader] = this.#options.token
     return headers

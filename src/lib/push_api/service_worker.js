@@ -28,9 +28,15 @@ export default class ServiceWorker {
   }
 
   async install () {
+    Logger.info('Installing service worker')
+
     const fullPath = this.#options.path + '/service-worker-loader.js.php'
-    const registration = await this.#workerContainer.register(fullPath, { scope: this.#scope })
+    await this.#workerContainer.register(fullPath, { scope: this.#scope })
+    const registration = await this.#getWorker()
     const pushSubscription = await this.#getPushSubscription(registration)
+
+    Logger.debug('Registration', registration)
+    Logger.debug('Push subscription', pushSubscription)
     return pushSubscription
   }
 

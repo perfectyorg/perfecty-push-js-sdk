@@ -50,27 +50,27 @@ export default class SettingsControl {
 
     document.getElementById('perfecty-push-settings-subscribed').onchange = async (e) => {
       const checked = e.target.checked
-      if (checked === false) {
-        await this.setActive(true)
-        return
-      }
 
       if (this.#permission.hasNeverAsked()) {
         this.#dialogControl.show()
       } else if (this.#permission.isDenied()) {
         this.#showMessage('You need to allow notifications')
       } else if (this.#permission.isGranted()) {
-        await this.setActive(true)
+        await this.setActive(checked)
       }
     }
+  }
+
+  setCheckboxActive (isActive) {
+    const subscribedControl = document.getElementById('perfecty-push-settings-subscribed')
+    subscribedControl.checked = isActive
   }
 
   async setActive (isActive) {
     const userId = this.#storage.userId()
     const success = await this.#apiClient.updatePreferences(userId, isActive)
     if (success === true) {
-      const subscribedControl = document.getElementById('perfecty-push-settings-subscribed')
-      subscribedControl.checked = isActive
+      this.setCheckboxActive(isActive)
       this.#storage.setIsUserActive(isActive)
       this.#showMessage('')
     } else {

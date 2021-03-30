@@ -76,7 +76,8 @@ describe('when installing', () => {
     const mockRegister = jest.fn().mockReturnValueOnce(Promise.resolve(serviceWorkerRegistration))
     navigatorSpy.mockImplementation(() => ({
       serviceWorker: {
-        register: mockRegister
+        register: jest.fn().mockReturnValue(Promise.resolve()),
+        getRegistration: mockRegister
       }
     }))
 
@@ -102,7 +103,8 @@ describe('when installing', () => {
     const mockRegister = jest.fn().mockReturnValueOnce(Promise.resolve(serviceWorkerRegistration))
     navigatorSpy.mockImplementation(() => ({
       serviceWorker: {
-        register: mockRegister
+        register: jest.fn().mockReturnValue(Promise.resolve()),
+        getRegistration: mockRegister
       }
     }))
 

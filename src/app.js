@@ -76,7 +76,7 @@ export default class PerfectyPush {
 
       if (response !== false) {
         this.#storage.setUserId(response.uuid)
-        await this.#settingsControl.setActive(true)
+        await this.#settingsControl.setCheckboxActive(true)
       }
     } else {
       Logger.info('The site has not permissions granted')

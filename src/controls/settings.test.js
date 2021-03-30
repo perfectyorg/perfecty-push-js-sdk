@@ -64,6 +64,13 @@ describe('when the subscribed check', () => {
         updatePreferences: () => { return true }
       }
     })
+    Permission.mockImplementationOnce(() => {
+      return {
+        hasNeverAsked: () => { return false },
+        isDenied: () => { return false },
+        isGranted: () => { return true }
+      }
+    })
 
     const options = new Options()
     const dialog = new SettingsControl(options)
@@ -79,6 +86,13 @@ describe('when the subscribed check', () => {
     ApiClient.mockImplementationOnce(() => {
       return {
         updatePreferences: () => { return false }
+      }
+    })
+    Permission.mockImplementationOnce(() => {
+      return {
+        hasNeverAsked: () => { return false },
+        isDenied: () => { return false },
+        isGranted: () => { return true }
       }
     })
 

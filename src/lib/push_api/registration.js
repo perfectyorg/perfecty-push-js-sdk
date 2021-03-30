@@ -17,11 +17,15 @@ export default class Registration {
   }
 
   async assureRegistration () {
+    Logger.info('Ensuring registration')
+
     await this.#removeConflicts()
     return await this.#registerIfMissing()
   }
 
   async register () {
+    Logger.info('Registering user')
+
     const pushSubscription = await this.#serviceWorker.install()
     return await this.#apiClient.register(pushSubscription)
   }
@@ -34,10 +38,13 @@ export default class Registration {
   }
 
   async #registerIfMissing () {
+    Logger.info('Checking if the service worker is installed')
     const installedType = await this.#serviceWorker.getInstalledType()
     if (installedType === ServiceWorker.TYPE_NOTHING) {
+      Logger.info('The service worker was not found, registering')
       return await this.register()
     }
+    Logger.info('Service worker found')
     return false
   }
 }

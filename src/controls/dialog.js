@@ -42,11 +42,14 @@ export default class DialogControl {
 
   #subscribeToEvents () {
     document.getElementById('perfecty-push-dialog-subscribe').onclick = async () => {
+      Logger.info('User is accepting the subscription')
       this.#storage.setHasAskedNotifications(true)
       this.#hide()
 
       await this.#permission.askIfNotDenied()
       if (this.#permission.isGranted()) {
+        Logger.info('User has granted permissions')
+
         this.#registration.register()
       }
     }

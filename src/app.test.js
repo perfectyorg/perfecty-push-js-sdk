@@ -85,7 +85,7 @@ describe('when the app is started', () => {
     expect(result).toEqual(true)
     expect(mockAssureRegistration).toHaveBeenCalledTimes(1)
     expect(storageInstance.setUserId).toHaveBeenCalledTimes(1)
-    expect(settingsControlInstance.setActive).toHaveBeenCalledTimes(1)
+    expect(settingsControlInstance.setCheckboxActive).toHaveBeenCalledTimes(1)
   })
 
   it('register service if permission granted but unsuccessful', async () => {

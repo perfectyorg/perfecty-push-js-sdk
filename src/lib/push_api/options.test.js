@@ -11,7 +11,7 @@ const defaultOptions = {
   siteUrl: '',
   serverUrl: '',
   vapidPublicKey: '',
-  tokenHeader: '',
+  tokenHeader: 'Bearer',
   token: '',
   enabled: true,
   unregisterConflicts: false,
