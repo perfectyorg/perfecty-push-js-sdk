@@ -1,7 +1,7 @@
 import Logger from '../logger'
 
-export default class Permission {
-  async askIfNotDenied () {
+const Permission = (() => {
+  const askIfNotDenied = async () => {
     let permission = window.Notification.permission
     if (permission !== 'denied') {
       Logger.info('Requesting Notification permission')
@@ -12,15 +12,24 @@ export default class Permission {
     return permission
   }
 
-  isGranted () {
+  const isGranted = () => {
     return Notification.permission === 'granted'
   }
 
-  isDenied () {
+  const isDenied = () => {
     return Notification.permission === 'denied'
   }
 
-  hasNeverAsked () {
+  const hasNeverAsked = () => {
     return Notification.permission === 'default'
   }
-}
+
+  return {
+    askIfNotDenied,
+    isGranted,
+    isDenied,
+    hasNeverAsked
+  }
+})()
+
+export default Permission

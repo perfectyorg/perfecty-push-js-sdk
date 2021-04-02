@@ -6,11 +6,12 @@ import ApiClient from '../lib/push_api/api_client'
 import SettingsControl from './settings'
 import DialogControl from './dialog'
 
-jest.mock('../lib/push_api/permission', () => {
-  return jest.fn().mockImplementation(() => {
-    return { hasNeverAsked: () => { return true } }
-  })
-})
+jest.mock('../lib/push_api/permission', () => ({
+  hasNeverAsked: jest.fn().mockImplementation(() => true),
+  isDenied: jest.fn().mockImplementation(() => false),
+  isGranted: jest.fn().mockImplementation(() => true)
+}))
+
 const mockSetIsUserActive = jest.fn().mockReturnValue(true)
 jest.mock('../lib/push_api/storage', () => {
   return jest.fn().mockImplementation(() => {
@@ -27,7 +28,9 @@ jest.mock('../lib/push_api/api_client')
 jest.mock('./dialog')
 
 beforeEach(() => {
-  Permission.mockClear()
+  Permission.hasNeverAsked.mockClear()
+  Permission.isDenied.mockClear()
+  Permission.isGranted.mockClear()
   Storage.mockClear()
   ApiClient.mockClear()
   mockSetIsUserActive.mockClear()
@@ -64,13 +67,7 @@ describe('when the subscribed check', () => {
         updatePreferences: () => { return true }
       }
     })
-    Permission.mockImplementationOnce(() => {
-      return {
-        hasNeverAsked: () => { return false },
-        isDenied: () => { return false },
-        isGranted: () => { return true }
-      }
-    })
+    Permission.hasNeverAsked.mockImplementationOnce(() => false)
 
     const options = new Options()
     const dialog = new SettingsControl(options)
@@ -88,13 +85,7 @@ describe('when the subscribed check', () => {
         updatePreferences: () => { return false }
       }
     })
-    Permission.mockImplementationOnce(() => {
-      return {
-        hasNeverAsked: () => { return false },
-        isDenied: () => { return false },
-        isGranted: () => { return true }
-      }
-    })
+    Permission.hasNeverAsked.mockImplementationOnce(() => false)
 
     const options = new Options()
     const dialog = new SettingsControl(options)
@@ -112,13 +103,7 @@ describe('when the subscribed check', () => {
         updatePreferences: () => { return true }
       }
     })
-    Permission.mockImplementationOnce(() => {
-      return {
-        hasNeverAsked: () => { return false },
-        isDenied: () => { return false },
-        isGranted: () => { return true }
-      }
-    })
+    Permission.hasNeverAsked.mockImplementationOnce(() => false)
 
     const options = new Options()
     const dialog = new SettingsControl(options)
@@ -131,13 +116,7 @@ describe('when the subscribed check', () => {
   })
 
   it('is checked and no permissions asked yet, opens the dialog message', async () => {
-    Permission.mockImplementationOnce(() => {
-      return {
-        hasNeverAsked: () => { return true },
-        isDenied: () => { return false },
-        isGranted: () => { return false }
-      }
-    })
+    Permission.isGranted.mockImplementationOnce(() => false)
 
     const options = new Options()
     const dialog = new SettingsControl(options)

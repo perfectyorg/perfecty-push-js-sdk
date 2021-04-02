@@ -9,7 +9,6 @@ import Logger from './lib/logger'
 
 export default class PerfectyPush {
   #options
-  #permission
   #features
   #registration
   #storage
@@ -22,7 +21,6 @@ export default class PerfectyPush {
    */
   constructor (customOptions = {}) {
     this.#options = new Options(customOptions)
-    this.#permission = new Permission()
     this.#features = new Features()
     this.#registration = new Registration(this.#options)
     this.#storage = new Storage()
@@ -69,7 +67,7 @@ export default class PerfectyPush {
 
   async #checkRegistration () {
     Logger.info('Checking user registration')
-    if (this.#permission.isGranted()) {
+    if (Permission.isGranted()) {
       Logger.info('The site has permissions granted')
 
       const response = await this.#registration.assureRegistration()

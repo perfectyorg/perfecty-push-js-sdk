@@ -5,13 +5,11 @@ import Logger from '../lib/logger'
 
 export default class DialogControl {
   #options
-  #permission
   #storage
   #registration
 
   constructor (options) {
     this.#options = options
-    this.#permission = new Permission()
     this.#storage = new Storage()
     this.#registration = new Registration()
   }
@@ -46,8 +44,8 @@ export default class DialogControl {
       this.#storage.setHasAskedNotifications(true)
       this.#hide()
 
-      await this.#permission.askIfNotDenied()
-      if (this.#permission.isGranted()) {
+      await Permission.askIfNotDenied()
+      if (Permission.isGranted()) {
         Logger.info('User has granted permissions')
 
         this.#registration.register()
@@ -61,7 +59,7 @@ export default class DialogControl {
   }
 
   #showDialogToUnsubscribedUser () {
-    if (this.#permission.hasNeverAsked() && !this.#storage.hasAskedNotifications()) {
+    if (Permission.hasNeverAsked() && !this.#storage.hasAskedNotifications()) {
       this.show()
     } else {
       Logger.debug('Dialog control not displayed: permissions already asked or already granted')

@@ -5,14 +5,12 @@ import DialogControl from './dialog'
 
 export default class SettingsControl {
   #options
-  #permission
   #storage
   #apiClient
   #dialogControl
 
   constructor (options) {
     this.#options = options
-    this.#permission = new Permission()
     this.#storage = new Storage()
     this.#apiClient = new ApiClient(options)
     this.#dialogControl = new DialogControl(options)
@@ -51,11 +49,11 @@ export default class SettingsControl {
     document.getElementById('perfecty-push-settings-subscribed').onchange = async (e) => {
       const checked = e.target.checked
 
-      if (this.#permission.hasNeverAsked()) {
+      if (Permission.hasNeverAsked()) {
         this.#dialogControl.show()
-      } else if (this.#permission.isDenied()) {
+      } else if (Permission.isDenied()) {
         this.#showMessage('You need to allow notifications')
-      } else if (this.#permission.isGranted()) {
+      } else if (Permission.isGranted()) {
         await this.setActive(checked)
       }
     }

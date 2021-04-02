@@ -38,7 +38,6 @@ export default class ApiClient {
 
     const path = `${this.#options.serverUrl}/v1/public/users/${userId}/preferences`
     const bodyContent = JSON.stringify({
-      user_id: userId,
       is_active: isActive
     })
 

@@ -7,11 +7,13 @@ import DialogControl from './controls/dialog'
 import SettingsControl from './controls/settings'
 import PerfectyPush from './app'
 
-jest.mock('./lib/push_api/permission', () => {
-  return jest.fn().mockImplementation(() => {
-    return { isGranted: () => { return true } }
-  })
-})
+jest.mock('./lib/push_api/permission', () => ({
+  __esModule: true,
+  default: {
+    isGranted: jest.fn().mockImplementation(() => true)
+  }
+}))
+
 jest.mock('./lib/push_api/features', () => {
   return jest.fn().mockImplementation(() => {
     return { isSupported: () => { return true } }
@@ -29,7 +31,7 @@ jest.mock('./controls/settings')
 
 describe('when the app is started', () => {
   beforeEach(() => {
-    Permission.mockClear()
+    Permission.isGranted.mockClear()
     Features.mockClear()
     Registration.mockClear()
     mockAssureRegistration.mockClear()
@@ -106,12 +108,7 @@ describe('when the app is started', () => {
   })
 
   it('doesn\'t register service if permission is not granted', async () => {
-    const mockIsGranted = jest.fn().mockReturnValueOnce(false)
-    Permission.mockImplementationOnce(() => {
-      return {
-        isGranted: mockIsGranted
-      }
-    })
+    Permission.isGranted.mockImplementationOnce(() => false)
 
     const app = new PerfectyPush()
     const result = await app.start()

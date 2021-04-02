@@ -5,11 +5,11 @@ import Storage from '../lib/push_api/storage'
 import Registration from '../lib/push_api/registration'
 import DialogControl from './dialog'
 
-jest.mock('../lib/push_api/permission', () => {
-  return jest.fn().mockImplementation(() => {
-    return { hasNeverAsked: () => { return true } }
-  })
-})
+jest.mock('../lib/push_api/permission', () => ({
+  hasNeverAsked: jest.fn().mockImplementation(() => true),
+  isGranted: jest.fn().mockImplementation(() => true),
+  askIfNotDenied: jest.fn().mockReturnValueOnce('granted')
+}))
 jest.mock('../lib/push_api/storage', () => {
   return jest.fn().mockImplementation(() => {
     return {
@@ -21,18 +21,16 @@ jest.mock('../lib/push_api/registration')
 
 describe('when the dialog is created', () => {
   beforeEach(() => {
-    Permission.mockClear()
+    Permission.hasNeverAsked.mockClear()
+    Permission.isGranted.mockClear()
+    Permission.askIfNotDenied.mockClear()
     Storage.mockClear()
     Registration.mockClear()
     document.body.innerHTML = ''
   })
 
   it('is drawn and hidden if already subscribed', () => {
-    Permission.mockImplementationOnce(() => {
-      return {
-        hasNeverAsked: () => { return false }
-      }
-    })
+    Permission.hasNeverAsked.mockImplementationOnce(() => false)
 
     const options = new Options()
     const dialog = new DialogControl(options)
@@ -92,14 +90,6 @@ describe('when the dialog is created', () => {
         setHasAskedNotifications: mockSetHasAskedNotifications
       }
     })
-    const mockAskIfNotDenied = jest.fn().mockReturnValueOnce('granted')
-    Permission.mockImplementationOnce(() => {
-      return {
-        hasNeverAsked: () => { return true },
-        askIfNotDenied: mockAskIfNotDenied,
-        isGranted: () => { return true }
-      }
-    })
 
     const options = new Options()
     const dialog = new DialogControl(options)
@@ -111,7 +101,7 @@ describe('when the dialog is created', () => {
     await simulateClickOnSubscribe()
     expect(isShown()).toEqual(false)
     expect(mockSetHasAskedNotifications).toHaveBeenCalledTimes(1)
-    expect(mockAskIfNotDenied).toHaveBeenCalledTimes(1)
+    expect(Permission.askIfNotDenied).toHaveBeenCalledTimes(1)
     expect(registrationInstance.register).toHaveBeenCalledTimes(1)
   })
 })
