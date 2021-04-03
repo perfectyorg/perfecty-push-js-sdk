@@ -2,14 +2,13 @@ import Permission from '../lib/push_api/permission'
 import Storage from '../lib/push_api/storage'
 import Registration from '../lib/push_api/registration'
 import Logger from '../lib/logger'
+import Options from '../lib/push_api/options'
 
 export default class DialogControl {
-  #options
   #storage
   #registration
 
-  constructor (options) {
-    this.#options = options
+  constructor () {
     this.#storage = new Storage()
     this.#registration = new Registration()
   }
@@ -26,10 +25,10 @@ export default class DialogControl {
     const html =
         '<div class="site perfecty-push-dialog-container" id="perfecty-push-dialog-container">' +
         '  <div class="perfecty-push-dialog-box">' +
-        '    <div class="perfecty-push-dialog-title">' + this.#options.dialogTitle + '</div>' +
+        '    <div class="perfecty-push-dialog-title">' + Options.dialogTitle + '</div>' +
         '    <div class="perfecty-push-dialog-buttons">' +
-        '      <button id="perfecty-push-dialog-cancel" type="button" class="button secondary">' + this.#options.dialogCancel + '</button>' +
-        '      <button id="perfecty-push-dialog-subscribe" type="button" class="button primary">' + this.#options.dialogSubmit + '</button> ' +
+        '      <button id="perfecty-push-dialog-cancel" type="button" class="button secondary">' + Options.dialogCancel + '</button>' +
+        '      <button id="perfecty-push-dialog-subscribe" type="button" class="button primary">' + Options.dialogSubmit + '</button> ' +
         '    </div>' +
         '  </div>' +
         '</div>'

@@ -26,12 +26,13 @@ beforeEach(() => {
 
 describe('when assuring the registration', () => {
   it('removes existing service workers that conflict', () => {
-    const options = new Options({ unregisterConflicts: true })
-    const registration = new Registration(options)
+    Options.unregisterConflicts = true
+    const registration = new Registration()
     registration.assureRegistration()
 
     const serviceWorkerInstance = ServiceWorker.mock.instances[0]
     expect(serviceWorkerInstance.removeConflicts).toHaveBeenCalledTimes(1)
+    Options.unregisterConflicts = false
   })
 
   it('register if our service worker is missing', async () => {
@@ -43,8 +44,7 @@ describe('when assuring the registration', () => {
       }
     })
 
-    const options = new Options()
-    const registration = new Registration(options)
+    const registration = new Registration()
     await registration.assureRegistration()
 
     expect(mockInstall).toHaveBeenCalledTimes(1)
@@ -59,8 +59,7 @@ describe('when assuring the registration', () => {
       }
     })
 
-    const options = new Options()
-    const registration = new Registration(options)
+    const registration = new Registration()
     await registration.assureRegistration()
 
     expect(mockInstall).toHaveBeenCalledTimes(0)
@@ -69,8 +68,7 @@ describe('when assuring the registration', () => {
 
 describe('when registering the service', () => {
   it('installs the service and calls the api', async () => {
-    const options = new Options()
-    const registration = new Registration(options)
+    const registration = new Registration()
     await registration.register()
 
     const serviceWorkerInstance = ServiceWorker.mock.instances[0]

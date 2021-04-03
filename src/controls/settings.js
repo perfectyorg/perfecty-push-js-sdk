@@ -2,18 +2,17 @@ import Permission from '../lib/push_api/permission'
 import Storage from '../lib/push_api/storage'
 import ApiClient from '../lib/push_api/api_client'
 import DialogControl from './dialog'
+import Options from '../lib/push_api/options'
 
 export default class SettingsControl {
-  #options
   #storage
   #apiClient
   #dialogControl
 
-  constructor (options) {
-    this.#options = options
+  constructor () {
     this.#storage = new Storage()
-    this.#apiClient = new ApiClient(options)
-    this.#dialogControl = new DialogControl(options)
+    this.#apiClient = new ApiClient()
+    this.#dialogControl = new DialogControl()
   }
 
   draw () {
@@ -27,9 +26,9 @@ export default class SettingsControl {
     const html =
         '<div class="perfecty-push-settings-container">' +
         '  <div id="perfecty-push-settings-form">' +
-        '    <div>' + this.#options.settingsTitle + '</div>' +
+        '    <div>' + Options.settingsTitle + '</div>' +
         '    <input type="checkbox" id="perfecty-push-settings-subscribed" ' + isSubscribed + '/>' +
-        '    <label for="perfecty-push-settings-subscribed">' + this.#options.settingsOptIn + '</label>' +
+        '    <label for="perfecty-push-settings-subscribed">' + Options.settingsOptIn + '</label>' +
         '    <div id="perfecty-push-settings-notification"></div>' +
         '  </div>' +
         '    <div id="perfecty-push-settings-open">' +

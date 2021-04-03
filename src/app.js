@@ -8,7 +8,6 @@ import Storage from './lib/push_api/storage'
 import Logger from './lib/logger'
 
 export default class PerfectyPush {
-  #options
   #features
   #registration
   #storage
@@ -20,14 +19,15 @@ export default class PerfectyPush {
    * @param customOptions object with all the custom options as properties
    */
   constructor (customOptions = {}) {
-    this.#options = new Options(customOptions)
-    this.#features = new Features()
-    this.#registration = new Registration(this.#options)
-    this.#storage = new Storage()
-    this.#dialogControl = new DialogControl(this.#options)
-    this.#settingsControl = new SettingsControl(this.#options)
+    Options.init(customOptions)
 
-    Logger.setup({ verbose: this.#options.loggerVerbose, level: this.#options.loggerLevel })
+    this.#features = new Features()
+    this.#registration = new Registration()
+    this.#storage = new Storage()
+    this.#dialogControl = new DialogControl()
+    this.#settingsControl = new SettingsControl()
+
+    Logger.setup({ verbose: Options.loggerVerbose, level: Options.loggerLevel })
   }
 
   /**
@@ -36,7 +36,7 @@ export default class PerfectyPush {
    */
   async start () {
     Logger.info('Starting Perfecty Push SDK')
-    Logger.debug('SDK options', this.#options)
+    Logger.debug('SDK options', Options)
 
     if (!this.#isSupportedAndEnabled()) {
       Logger.info('Browser is not supported or the SDK is not enabled')
@@ -55,7 +55,7 @@ export default class PerfectyPush {
    * @returns {*|boolean} true if supported and enabled, otherwise false
    */
   #isSupportedAndEnabled () {
-    return (this.#features.isSupported() && this.#options.enabled)
+    return (this.#features.isSupported() && Options.enabled)
   }
 
   #drawHtmlControls () {

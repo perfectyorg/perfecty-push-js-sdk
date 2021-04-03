@@ -6,6 +6,7 @@ import Storage from './lib/push_api/storage'
 import DialogControl from './controls/dialog'
 import SettingsControl from './controls/settings'
 import PerfectyPush from './app'
+import Options from './lib/push_api/options'
 
 jest.mock('./lib/push_api/permission', () => ({
   __esModule: true,
@@ -38,6 +39,7 @@ describe('when the app is started', () => {
     Storage.mockClear()
     DialogControl.mockClear()
     SettingsControl.mockClear()
+    Options.enabled = true
   })
 
   it('works with supported features and enabled', async () => {

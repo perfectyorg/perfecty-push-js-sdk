@@ -1,5 +1,4 @@
 import 'regenerator-runtime/runtime'
-import Options from '../lib/push_api/options'
 import Permission from '../lib/push_api/permission'
 import Storage from '../lib/push_api/storage'
 import Registration from '../lib/push_api/registration'
@@ -32,8 +31,7 @@ describe('when the dialog is created', () => {
   it('is drawn and hidden if already subscribed', () => {
     Permission.hasNeverAsked.mockImplementationOnce(() => false)
 
-    const options = new Options()
-    const dialog = new DialogControl(options)
+    const dialog = new DialogControl()
     dialog.draw()
 
     const expectedHTML = '<div class="site perfecty-push-dialog-container" id="perfecty-push-dialog-container" style="display: none;">  <div class="perfecty-push-dialog-box">    <div class="perfecty-push-dialog-title">Do you want to receive notifications?</div>    <div class="perfecty-push-dialog-buttons">      <button id="perfecty-push-dialog-cancel" type="button" class="button secondary">Not now</button>      <button id="perfecty-push-dialog-subscribe" type="button" class="button primary">Continue</button>     </div>  </div></div>'
@@ -42,8 +40,7 @@ describe('when the dialog is created', () => {
   })
 
   it('is shown to unsubscribed users', () => {
-    const options = new Options()
-    const dialog = new DialogControl(options)
+    const dialog = new DialogControl()
     dialog.draw()
 
     expect(isShown()).toEqual(true)
@@ -56,8 +53,7 @@ describe('when the dialog is created', () => {
       }
     })
 
-    const options = new Options()
-    const dialog = new DialogControl(options)
+    const dialog = new DialogControl()
     dialog.draw()
 
     expect(isShown()).toEqual(false)
@@ -72,8 +68,7 @@ describe('when the dialog is created', () => {
       }
     })
 
-    const options = new Options()
-    const dialog = new DialogControl(options)
+    const dialog = new DialogControl()
     dialog.draw()
 
     expect(isShown()).toEqual(true)
@@ -91,8 +86,7 @@ describe('when the dialog is created', () => {
       }
     })
 
-    const options = new Options()
-    const dialog = new DialogControl(options)
+    const dialog = new DialogControl()
     dialog.draw()
 
     const registrationInstance = Registration.mock.instances[0]

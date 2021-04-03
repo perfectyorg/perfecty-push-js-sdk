@@ -1,101 +1,94 @@
 import Logger from '../logger'
 
-export default class Options {
-  #pathValue = ''
-  #dialogTitleValue = 'Do you want to receive notifications?'
-  #dialogSubmitValue = 'Continue'
-  #dialogCancelValue = 'Not now'
-  #settingsTitleValue = 'Notifications preferences'
-  #settingsOptInValue = 'I want to receive notifications'
-  #siteUrlValue = ''
-  #serverUrlValue = ''
-  #vapidPublicKeyValue = ''
-  #tokenHeaderValue = 'Bearer'
-  #tokenValue = ''
-  #enabledValue = true
-  #unregisterConflictsValue = false
-  #serviceWorkerScope = '/perfecty/push'
-  #loggerLevel = 'error'
-  #loggerVerbose = false
+const Options = (() => {
+  let pathValue = ''
+  let dialogTitleValue = 'Do you want to receive notifications?'
+  let dialogSubmitValue = 'Continue'
+  let dialogCancelValue = 'Not now'
+  let settingsTitleValue = 'Notifications preferences'
+  let settingsOptInValue = 'I want to receive notifications'
+  let siteUrlValue = ''
+  let serverUrlValue = ''
+  let vapidPublicKeyValue = ''
+  let tokenHeaderValue = 'Bearer'
+  let tokenValue = ''
+  let enabledValue = true
+  let unregisterConflictsValue = false
+  let serviceWorkerScope = '/perfecty/push'
+  let loggerLevel = Logger.ERROR
+  let loggerVerbose = false
 
-  get path () { return this.#pathValue }
-  set path (v) { this.#pathValue = this.#getValue(v, this.#pathValue) }
-
-  get dialogTitle () { return this.#dialogTitleValue }
-  set dialogTitle (v) { this.#dialogTitleValue = this.#getValue(v, this.#dialogTitleValue) }
-
-  get dialogSubmit () { return this.#dialogSubmitValue }
-  set dialogSubmit (v) { this.#dialogSubmitValue = this.#getValue(v, this.#dialogSubmitValue) }
-
-  get dialogCancel () { return this.#dialogCancelValue }
-  set dialogCancel (v) { this.#dialogCancelValue = this.#getValue(v, this.#dialogCancelValue) }
-
-  get settingsTitle () { return this.#settingsTitleValue }
-  set settingsTitle (v) { this.#settingsTitleValue = this.#getValue(v, this.#settingsTitleValue) }
-
-  get settingsOptIn () { return this.#settingsOptInValue }
-  set settingsOptIn (v) { this.#settingsOptInValue = this.#getValue(v, this.#settingsOptInValue) }
-
-  get siteUrl () { return this.#siteUrlValue }
-  set siteUrl (v) { this.#siteUrlValue = this.#getValue(v, this.#siteUrlValue) }
-
-  get serverUrl () { return this.#serverUrlValue }
-  set serverUrl (v) { this.#serverUrlValue = this.#getValue(v, this.#serverUrlValue) }
-
-  get vapidPublicKey () { return this.#vapidPublicKeyValue }
-  set vapidPublicKey (v) { this.#vapidPublicKeyValue = this.#getValue(v, this.#vapidPublicKeyValue) }
-
-  get tokenHeader () { return this.#tokenHeaderValue }
-  set tokenHeader (v) { this.#tokenHeaderValue = this.#getValue(v, this.#tokenHeaderValue) }
-
-  get token () { return this.#tokenValue }
-  set token (v) { this.#tokenValue = this.#getValue(v, this.#tokenValue) }
-
-  get enabled () { return this.#enabledValue }
-  set enabled (v) { this.#enabledValue = this.#getValue(v, this.#enabledValue) }
-
-  get unregisterConflicts () { return this.#unregisterConflictsValue }
-  set unregisterConflicts (v) { this.#unregisterConflictsValue = this.#getValue(v, this.#unregisterConflictsValue) }
-
-  get serviceWorkerScope () { return this.#serviceWorkerScope }
-  set serviceWorkerScope (v) { this.#serviceWorkerScope = this.#getValue(v, this.#serviceWorkerScope) }
-
-  get loggerLevel () { return this.#loggerLevel }
-  set loggerLevel (v) {
-    switch (this.#getValue(v, this.#loggerLevel).toLowerCase()) {
-      case 'debug': this.#loggerLevel = Logger.DEBUG; break
-      case 'info': this.#loggerLevel = Logger.INFO; break
-      case 'warn': this.#loggerLevel = Logger.WARN; break
-      case 'error': this.#loggerLevel = Logger.ERROR; break
-      default: this.#loggerLevel = Logger.INFO
-    }
-  }
-
-  get loggerVerbose () { return this.#loggerVerbose }
-  set loggerVerbose (v) { this.#loggerVerbose = this.#getValue(v, this.#loggerVerbose) }
-
-  constructor (custom) {
+  const init = (custom) => {
     custom = typeof custom === 'undefined' ? {} : custom
 
-    this.path = custom.path
-    this.dialogTitle = custom.dialogTitle
-    this.dialogSubmit = custom.dialogSubmit
-    this.dialogCancel = custom.dialogCancel
-    this.settingsTitle = custom.settingsTitle
-    this.settingsOptIn = custom.settingsOptIn
-    this.siteUrl = custom.siteUrl
-    this.serverUrl = custom.serverUrl
-    this.vapidPublicKey = custom.vapidPublicKey
-    this.tokenHeader = custom.tokenHeader
-    this.token = custom.token
-    this.enabled = custom.enabled
-    this.unregisterConflicts = custom.unregisterConflicts
-    this.serviceWorkerScope = custom.serviceWorkerScope
-    this.loggerLevel = custom.loggerLevel
-    this.loggerVerbose = custom.loggerVerbose
+    Options.path = custom.path
+    Options.dialogTitle = custom.dialogTitle
+    Options.dialogSubmit = custom.dialogSubmit
+    Options.dialogCancel = custom.dialogCancel
+    Options.settingsTitle = custom.settingsTitle
+    Options.settingsOptIn = custom.settingsOptIn
+    Options.siteUrl = custom.siteUrl
+    Options.serverUrl = custom.serverUrl
+    Options.vapidPublicKey = custom.vapidPublicKey
+    Options.tokenHeader = custom.tokenHeader
+    Options.token = custom.token
+    Options.enabled = custom.enabled
+    Options.unregisterConflicts = custom.unregisterConflicts
+    Options.serviceWorkerScope = custom.serviceWorkerScope
+    Options.loggerLevel = custom.loggerLevel
+    Options.loggerVerbose = custom.loggerVerbose
   }
 
-  #getValue (customValue, defaultValue) {
+  function getValue (customValue, defaultValue) {
     return typeof customValue !== 'undefined' && customValue !== null ? customValue : defaultValue
   }
-}
+
+  return {
+    init,
+    get path () { return pathValue },
+    set path (v) { pathValue = getValue(v, pathValue) },
+    get dialogTitle () { return dialogTitleValue },
+    set dialogTitle (v) {
+      dialogTitleValue = getValue(v, dialogTitleValue)
+    },
+    get dialogSubmit () { return dialogSubmitValue },
+    set dialogSubmit (v) { dialogSubmitValue = getValue(v, dialogSubmitValue) },
+    get dialogCancel () { return dialogCancelValue },
+    set dialogCancel (v) { dialogCancelValue = getValue(v, dialogCancelValue) },
+    get settingsTitle () { return settingsTitleValue },
+    set settingsTitle (v) { settingsTitleValue = getValue(v, settingsTitleValue) },
+    get settingsOptIn () { return settingsOptInValue },
+    set settingsOptIn (v) { settingsOptInValue = getValue(v, settingsOptInValue) },
+    get siteUrl () { return siteUrlValue },
+    set siteUrl (v) { siteUrlValue = getValue(v, siteUrlValue) },
+    get serverUrl () { return serverUrlValue },
+    set serverUrl (v) { serverUrlValue = getValue(v, serverUrlValue) },
+    get vapidPublicKey () { return vapidPublicKeyValue },
+    set vapidPublicKey (v) { vapidPublicKeyValue = getValue(v, vapidPublicKeyValue) },
+    get tokenHeader () { return tokenHeaderValue },
+    set tokenHeader (v) { tokenHeaderValue = getValue(v, tokenHeaderValue) },
+    get token () { return tokenValue },
+    set token (v) { tokenValue = getValue(v, tokenValue) },
+    get enabled () { return enabledValue },
+    set enabled (v) { enabledValue = getValue(v, enabledValue) },
+    get unregisterConflicts () { return unregisterConflictsValue },
+    set unregisterConflicts (v) { unregisterConflictsValue = getValue(v, unregisterConflictsValue) },
+    get serviceWorkerScope () { return serviceWorkerScope },
+    set serviceWorkerScope (v) { serviceWorkerScope = getValue(v, serviceWorkerScope) },
+    get loggerLevel () { return loggerLevel },
+    set loggerLevel (v) {
+      v = (typeof v !== 'undefined' && v !== null) ? v : ''
+
+      switch (v.toLowerCase()) {
+        case 'debug': loggerLevel = Logger.DEBUG; break
+        case 'info': loggerLevel = Logger.INFO; break
+        case 'warn': loggerLevel = Logger.WARN; break
+        case 'error': loggerLevel = Logger.ERROR; break
+      }
+    },
+    get loggerVerbose () { return loggerVerbose },
+    set loggerVerbose (v) { loggerVerbose = getValue(v, loggerVerbose) }
+  }
+})()
+
+export default Options

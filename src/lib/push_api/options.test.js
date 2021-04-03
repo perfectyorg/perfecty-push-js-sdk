@@ -1,4 +1,3 @@
-import Options from './options'
 import Logger from '../logger'
 
 const defaultOptions = {
@@ -20,49 +19,56 @@ const defaultOptions = {
   loggerVerbose: false
 }
 
-it('create', () => {
-  const options = new Options()
+describe('options', () => {
+  let Options
 
-  expect(areEqual(defaultOptions, options)).toEqual(true)
-})
+  beforeEach(() => {
+    Options = require('./options').default
+    jest.resetModules()
+  })
 
-it('create with custom args', () => {
-  const custom = {
-    dialogTitle: 'Test title'
+  it('create', () => {
+    expect(areEqual(Options, defaultOptions)).toEqual(true)
+  })
+
+  it('create with custom args', () => {
+    const custom = {
+      dialogTitle: 'Test title'
+    }
+    Options.init(custom)
+
+    const expected = { ...defaultOptions, dialogTitle: 'Test title' }
+    expect(areEqual(Options, expected)).toEqual(true)
+  })
+
+  it('create with custom args, ignore unknown', () => {
+    const custom = {
+      dialogTitle: 'Test title',
+      unknownProperty: 'Unknown'
+    }
+    Options.init(custom)
+
+    const expected = { ...defaultOptions, dialogTitle: 'Test title' }
+    expect(areEqual(Options, expected)).toEqual(true)
+  })
+
+  function areEqual (value, expected) {
+    expect(value.path).toEqual(expected.path)
+    expect(value.dialogTitle).toEqual(expected.dialogTitle)
+    expect(value.dialogSubmit).toEqual(expected.dialogSubmit)
+    expect(value.dialogCancel).toEqual(expected.dialogCancel)
+    expect(value.settingsTitle).toEqual(expected.settingsTitle)
+    expect(value.settingsOptIn).toEqual(expected.settingsOptIn)
+    expect(value.siteUrl).toEqual(expected.siteUrl)
+    expect(value.serverUrl).toEqual(expected.serverUrl)
+    expect(value.vapidPublicKey).toEqual(expected.vapidPublicKey)
+    expect(value.tokenHeader).toEqual(expected.tokenHeader)
+    expect(value.token).toEqual(expected.token)
+    expect(value.enabled).toEqual(expected.enabled)
+    expect(value.unregisterConflicts).toEqual(expected.unregisterConflicts)
+    expect(value.serviceWorkerScope).toEqual(expected.serviceWorkerScope)
+    expect(value.loggerLevel).toEqual(expected.loggerLevel)
+    expect(value.loggerVerbose).toEqual(expected.loggerVerbose)
+    return true
   }
-  const options = new Options(custom)
-
-  const expected = { ...defaultOptions, dialogTitle: 'Test title' }
-  expect(areEqual(expected, options)).toEqual(true)
 })
-
-it('create with custom args, ignore unknown', () => {
-  const custom = {
-    dialogTitle: 'Test title',
-    unknownProperty: 'Unknown'
-  }
-  const options = new Options(custom)
-
-  const expected = { ...defaultOptions, dialogTitle: 'Test title' }
-  expect(areEqual(expected, options)).toEqual(true)
-})
-
-function areEqual (expected, value) {
-  expect(expected.path).toEqual(value.path)
-  expect(expected.dialogTitle).toEqual(value.dialogTitle)
-  expect(expected.dialogSubmit).toEqual(value.dialogSubmit)
-  expect(expected.dialogCancel).toEqual(value.dialogCancel)
-  expect(expected.settingsTitle).toEqual(value.settingsTitle)
-  expect(expected.settingsOptIn).toEqual(value.settingsOptIn)
-  expect(expected.siteUrl).toEqual(value.siteUrl)
-  expect(expected.serverUrl).toEqual(value.serverUrl)
-  expect(expected.vapidPublicKey).toEqual(value.vapidPublicKey)
-  expect(expected.tokenHeader).toEqual(value.tokenHeader)
-  expect(expected.token).toEqual(value.token)
-  expect(expected.enabled).toEqual(value.enabled)
-  expect(expected.unregisterConflicts).toEqual(value.unregisterConflicts)
-  expect(expected.serviceWorkerScope).toEqual(value.serviceWorkerScope)
-  expect(expected.loggerLevel).toEqual(value.loggerLevel)
-  expect(expected.loggerVerbose).toEqual(value.loggerVerbose)
-  return true
-}

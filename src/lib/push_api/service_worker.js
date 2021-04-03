@@ -1,18 +1,17 @@
 import { urlBase64ToUint8Array } from './utils'
 import Logger from '../logger'
+import Options from './options'
 
 export default class ServiceWorker {
   static TYPE_NOTHING = 1
   static TYPE_CONFLICT = 2
   static TYPE_PERFECTY = 3
 
-  #options
   #scope = '/'
   #workerContainer
   #workerValue
 
-  constructor (options) {
-    this.#options = options
+  constructor () {
     this.#workerContainer = navigator.serviceWorker
   }
 
@@ -30,7 +29,7 @@ export default class ServiceWorker {
   async install () {
     Logger.info('Installing service worker')
 
-    const fullPath = this.#options.path + '/service-worker-loader.js.php'
+    const fullPath = Options.path + '/service-worker-loader.js.php'
     await this.#workerContainer.register(fullPath, { scope: this.#scope })
     const registration = await this.#getWorker()
     const pushSubscription = await this.#getPushSubscription(registration)
@@ -59,7 +58,7 @@ export default class ServiceWorker {
 
     return await registration.pushManager.subscribe({
       userVisibleOnly: true,
-      applicationServerKey: urlBase64ToUint8Array(this.#options.vapidPublicKey)
+      applicationServerKey: urlBase64ToUint8Array(Options.vapidPublicKey)
     })
   }
 

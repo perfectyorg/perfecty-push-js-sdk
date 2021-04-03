@@ -1,16 +1,11 @@
 import Logger from '../logger'
+import Options from './options'
 
 export default class ApiClient {
-  #options
-
-  constructor (options) {
-    this.#options = options
-  }
-
   async register (pushSubscription) {
     Logger.info('Registering user in the server')
 
-    const path = `${this.#options.serverUrl}/v1/public/users`
+    const path = `${Options.serverUrl}/v1/public/users`
     const bodyContent = JSON.stringify({
       user: pushSubscription
     })
@@ -36,7 +31,7 @@ export default class ApiClient {
     Logger.info('Updating user preferences')
     Logger.debug(`User: ${userId}, isActive: ${isActive}`)
 
-    const path = `${this.#options.serverUrl}/v1/public/users/${userId}/preferences`
+    const path = `${Options.serverUrl}/v1/public/users/${userId}/preferences`
     const bodyContent = JSON.stringify({
       is_active: isActive
     })
@@ -62,7 +57,7 @@ export default class ApiClient {
     const headers = {
       'Content-Type': 'application/json'
     }
-    headers[this.#options.tokenHeader] = this.#options.token
+    headers[Options.tokenHeader] = Options.token
     return headers
   }
 }

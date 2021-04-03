@@ -1,6 +1,5 @@
 import 'regenerator-runtime/runtime'
 import ServiceWorker from './service_worker'
-import Options from './options'
 
 let navigatorSpy
 
@@ -27,8 +26,7 @@ describe('when removing conflicts', () => {
       }
     }))
 
-    const options = new Options()
-    const serviceWorker = new ServiceWorker(options)
+    const serviceWorker = new ServiceWorker()
 
     await serviceWorker.removeConflicts()
 
@@ -51,8 +49,7 @@ describe('when removing conflicts', () => {
       }
     }))
 
-    const options = new Options()
-    const serviceWorker = new ServiceWorker(options)
+    const serviceWorker = new ServiceWorker()
 
     await serviceWorker.removeConflicts()
 
@@ -81,8 +78,7 @@ describe('when installing', () => {
       }
     }))
 
-    const options = new Options()
-    const serviceWorker = new ServiceWorker(options)
+    const serviceWorker = new ServiceWorker()
     const result = await serviceWorker.install()
 
     expect(result).toEqual({ mockKey: 'value' })
@@ -108,8 +104,7 @@ describe('when installing', () => {
       }
     }))
 
-    const options = new Options()
-    const serviceWorker = new ServiceWorker(options)
+    const serviceWorker = new ServiceWorker()
     const result = await serviceWorker.install()
 
     expect(result).toEqual({ mockExistingKey: 'existingValue' })
@@ -133,8 +128,7 @@ describe('when getting the installation type', () => {
       }
     }))
 
-    const options = new Options()
-    const serviceWorker = new ServiceWorker(options)
+    const serviceWorker = new ServiceWorker()
     const result = await serviceWorker.getInstalledType()
 
     expect(result).toEqual(ServiceWorker.TYPE_NOTHING)
@@ -156,8 +150,7 @@ describe('when getting the installation type', () => {
       }
     }))
 
-    const options = new Options()
-    const serviceWorker = new ServiceWorker(options)
+    const serviceWorker = new ServiceWorker()
     const result = await serviceWorker.getInstalledType()
 
     expect(result).toEqual(ServiceWorker.TYPE_PERFECTY)
@@ -179,8 +172,7 @@ describe('when getting the installation type', () => {
       }
     }))
 
-    const options = new Options()
-    const serviceWorker = new ServiceWorker(options)
+    const serviceWorker = new ServiceWorker()
     const result = await serviceWorker.getInstalledType()
 
     expect(result).toEqual(ServiceWorker.TYPE_CONFLICT)

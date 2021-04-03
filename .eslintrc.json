@@ -9,6 +9,7 @@
         "plugin:jest/recommended",
         "plugin:jest/style"
     ],
+    "ignorePatterns": ["dist/*"],
     "rules": {
     },
     "plugins": [

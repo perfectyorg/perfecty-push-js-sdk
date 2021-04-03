@@ -1,5 +1,4 @@
 import 'regenerator-runtime/runtime'
-import Options from './options'
 import ApiClient from './api_client'
 
 global.fetch = jest.fn()
@@ -18,8 +17,7 @@ describe('when registering a user', () => {
         json: () => Promise.resolve(response)
       })
     })
-    const options = new Options()
-    const apiClient = new ApiClient(options)
+    const apiClient = new ApiClient()
     const result = await apiClient.register(pushSubscription)
     expect(result).toEqual(response)
   })
@@ -31,8 +29,7 @@ describe('when registering a user', () => {
         json: () => Promise.resolve(response)
       })
     })
-    const options = new Options()
-    const apiClient = new ApiClient(options)
+    const apiClient = new ApiClient()
     const result = await apiClient.register(pushSubscription)
     expect(result).toEqual(false)
   })
@@ -46,8 +43,7 @@ describe('when updating the preferences', () => {
         json: () => Promise.resolve(response)
       })
     })
-    const options = new Options()
-    const apiClient = new ApiClient(options)
+    const apiClient = new ApiClient()
     const result = await apiClient.updatePreferences(pushSubscription)
     expect(result).toEqual(true)
   })
@@ -59,8 +55,7 @@ describe('when updating the preferences', () => {
         json: () => Promise.resolve(response)
       })
     })
-    const options = new Options()
-    const apiClient = new ApiClient(options)
+    const apiClient = new ApiClient()
     const result = await apiClient.updatePreferences(pushSubscription)
     expect(result).toEqual(false)
   })

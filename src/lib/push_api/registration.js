@@ -1,19 +1,18 @@
 import ServiceWorker from './service_worker'
 import ApiClient from './api_client'
 import Logger from '../logger'
+import Options from './options'
 
 /**
  * Registration Register the Service Worker
  */
 export default class Registration {
-  #options
   #serviceWorker
   #apiClient
 
-  constructor (options) {
-    this.#options = options
-    this.#serviceWorker = new ServiceWorker(this.#options)
-    this.#apiClient = new ApiClient(this.#options)
+  constructor () {
+    this.#serviceWorker = new ServiceWorker()
+    this.#apiClient = new ApiClient()
   }
 
   async assureRegistration () {
@@ -31,7 +30,7 @@ export default class Registration {
   }
 
   async #removeConflicts () {
-    if (this.#options.unregisterConflicts === true) {
+    if (Options.unregisterConflicts === true) {
       Logger.info('Removing conflicts')
       await this.#serviceWorker.removeConflicts()
     }
