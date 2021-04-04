@@ -18,12 +18,9 @@ jest.mock('./lib/push_api/permission', () => ({
 jest.mock('./lib/push_api/features', () => ({
   isSupported: jest.fn(() => true)
 }))
-const mockAssureRegistration = jest.fn().mockReturnValue(Promise.resolve({ uuid: 'mocked-uuid' }))
-jest.mock('./lib/push_api/registration', () => {
-  return jest.fn().mockImplementation(() => {
-    return { assureRegistration: mockAssureRegistration }
-  })
-})
+jest.mock('./lib/push_api/registration', () => ({
+  assureRegistration: jest.fn(() => Promise.resolve({ uuid: 'mocked-uuid' }))
+}))
 jest.mock('./lib/push_api/storage')
 jest.mock('./controls/dialog')
 jest.mock('./controls/settings')
@@ -32,8 +29,7 @@ describe('when the app is started', () => {
   beforeEach(() => {
     Permission.isGranted.mockClear()
     Features.isSupported.mockClear()
-    Registration.mockClear()
-    mockAssureRegistration.mockClear()
+    Registration.assureRegistration.mockClear()
     Storage.mockClear()
     DialogControl.mockClear()
     SettingsControl.mockClear()
@@ -80,17 +76,13 @@ describe('when the app is started', () => {
     const storageInstance = Storage.mock.instances[0]
     const settingsControlInstance = SettingsControl.mock.instances[0]
     expect(result).toEqual(true)
-    expect(mockAssureRegistration).toHaveBeenCalledTimes(1)
+    expect(Registration.assureRegistration).toHaveBeenCalledTimes(1)
     expect(storageInstance.setUserId).toHaveBeenCalledTimes(1)
     expect(settingsControlInstance.setCheckboxActive).toHaveBeenCalledTimes(1)
   })
 
   it('register service if permission granted but unsuccessful', async () => {
-    Registration.mockImplementationOnce(() => {
-      return {
-        assureRegistration: () => { return Promise.resolve(false) }
-      }
-    })
+    Registration.assureRegistration.mockImplementationOnce(() => Promise.resolve(false))
 
     const app = new PerfectyPush()
     const result = await app.start()
@@ -100,6 +92,7 @@ describe('when the app is started', () => {
     expect(result).toEqual(true)
     expect(storageInstance.setUserId).toHaveBeenCalledTimes(0)
     expect(settingsControlInstance.setActive).toHaveBeenCalledTimes(0)
+    expect(Registration.assureRegistration).toHaveBeenCalledTimes(1)
   })
 
   it('doesn\'t register service if permission is not granted', async () => {
@@ -109,6 +102,6 @@ describe('when the app is started', () => {
     const result = await app.start()
 
     expect(result).toEqual(true)
-    expect(mockAssureRegistration).toHaveBeenCalledTimes(0)
+    expect(Registration.assureRegistration).toHaveBeenCalledTimes(0)
   })
 })

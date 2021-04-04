@@ -6,11 +6,9 @@ import Options from '../lib/push_api/options'
 
 export default class DialogControl {
   #storage
-  #registration
 
   constructor () {
     this.#storage = new Storage()
-    this.#registration = new Registration()
   }
 
   draw () {
@@ -47,7 +45,7 @@ export default class DialogControl {
       if (Permission.isGranted()) {
         Logger.info('User has granted permissions')
 
-        this.#registration.register()
+        await Registration.register()
       }
     }
 

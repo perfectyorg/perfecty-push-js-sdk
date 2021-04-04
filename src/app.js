@@ -8,7 +8,6 @@ import Storage from './lib/push_api/storage'
 import Logger from './lib/logger'
 
 export default class PerfectyPush {
-  #registration
   #storage
   #dialogControl
   #settingsControl
@@ -20,7 +19,6 @@ export default class PerfectyPush {
   constructor (customOptions = {}) {
     Options.init(customOptions)
 
-    this.#registration = new Registration()
     this.#storage = new Storage()
     this.#dialogControl = new DialogControl()
     this.#settingsControl = new SettingsControl()
@@ -68,7 +66,7 @@ export default class PerfectyPush {
     if (Permission.isGranted()) {
       Logger.info('The site has permissions granted')
 
-      const response = await this.#registration.assureRegistration()
+      const response = await Registration.assureRegistration()
 
       if (response !== false) {
         this.#storage.setUserId(response.uuid)

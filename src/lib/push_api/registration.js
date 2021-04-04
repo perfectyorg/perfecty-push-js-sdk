@@ -6,42 +6,43 @@ import Options from './options'
 /**
  * Registration Register the Service Worker
  */
-export default class Registration {
-  #serviceWorker
-
-  constructor () {
-    this.#serviceWorker = new ServiceWorker()
-  }
-
-  async assureRegistration () {
+const Registration = (() => {
+  const assureRegistration = async () => {
     Logger.info('Ensuring registration')
 
-    await this.#removeConflicts()
-    return await this.#registerIfMissing()
+    await removeConflicts()
+    return await registerIfMissing()
   }
 
-  async register () {
+  const register = async () => {
     Logger.info('Registering user')
 
-    const pushSubscription = await this.#serviceWorker.install()
+    const pushSubscription = await ServiceWorker.install()
     return await ApiClient.register(pushSubscription)
   }
 
-  async #removeConflicts () {
+  const removeConflicts = async () => {
     if (Options.unregisterConflicts === true) {
       Logger.info('Removing conflicts')
-      await this.#serviceWorker.removeConflicts()
+      await ServiceWorker.removeConflicts()
     }
   }
 
-  async #registerIfMissing () {
+  const registerIfMissing = async () => {
     Logger.info('Checking if the service worker is installed')
-    const installedType = await this.#serviceWorker.getInstalledType()
+    const installedType = await ServiceWorker.getInstalledType()
     if (installedType === ServiceWorker.TYPE_NOTHING) {
       Logger.info('The service worker was not found, registering')
-      return await this.register()
+      return await register()
     }
     Logger.info('Service worker found')
     return false
   }
-}
+
+  return {
+    assureRegistration,
+    register
+  }
+})()
+
+export default Registration

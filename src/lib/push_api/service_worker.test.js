@@ -1,10 +1,12 @@
 import 'regenerator-runtime/runtime'
-import ServiceWorker from './service_worker'
 
 let navigatorSpy
 
+let ServiceWorker
+
 beforeEach(() => {
   navigatorSpy = jest.spyOn(global, 'navigator', 'get')
+  jest.resetModules()
 })
 afterEach(() => {
   navigatorSpy.mockRestore()
@@ -25,10 +27,9 @@ describe('when removing conflicts', () => {
         getRegistration: mockGetRegistration
       }
     }))
+    ServiceWorker = require('./service_worker').default
 
-    const serviceWorker = new ServiceWorker()
-
-    await serviceWorker.removeConflicts()
+    await ServiceWorker.removeConflicts()
 
     expect(mockGetRegistration).toHaveBeenCalledTimes(1)
     expect(mockUnregister).toHaveBeenCalledTimes(1)
@@ -48,10 +49,9 @@ describe('when removing conflicts', () => {
         getRegistration: mockGetRegistration
       }
     }))
+    ServiceWorker = require('./service_worker').default
 
-    const serviceWorker = new ServiceWorker()
-
-    await serviceWorker.removeConflicts()
+    await ServiceWorker.removeConflicts()
 
     expect(mockGetRegistration).toHaveBeenCalledTimes(1)
     expect(mockUnregister).toHaveBeenCalledTimes(0)
@@ -77,9 +77,9 @@ describe('when installing', () => {
         getRegistration: mockRegister
       }
     }))
+    ServiceWorker = require('./service_worker').default
 
-    const serviceWorker = new ServiceWorker()
-    const result = await serviceWorker.install()
+    const result = await ServiceWorker.install()
 
     expect(result).toEqual({ mockKey: 'value' })
   })
@@ -103,9 +103,9 @@ describe('when installing', () => {
         getRegistration: mockRegister
       }
     }))
+    ServiceWorker = require('./service_worker').default
 
-    const serviceWorker = new ServiceWorker()
-    const result = await serviceWorker.install()
+    const result = await ServiceWorker.install()
 
     expect(result).toEqual({ mockExistingKey: 'existingValue' })
     expect(mockSubscribe).toHaveBeenCalledTimes(0)
@@ -127,9 +127,9 @@ describe('when getting the installation type', () => {
         getRegistration: mockGetRegistration
       }
     }))
+    ServiceWorker = require('./service_worker').default
 
-    const serviceWorker = new ServiceWorker()
-    const result = await serviceWorker.getInstalledType()
+    const result = await ServiceWorker.getInstalledType()
 
     expect(result).toEqual(ServiceWorker.TYPE_NOTHING)
     expect(mockGetRegistration).toHaveBeenCalledTimes(1)
@@ -149,9 +149,9 @@ describe('when getting the installation type', () => {
         getRegistration: mockGetRegistration
       }
     }))
+    ServiceWorker = require('./service_worker').default
 
-    const serviceWorker = new ServiceWorker()
-    const result = await serviceWorker.getInstalledType()
+    const result = await ServiceWorker.getInstalledType()
 
     expect(result).toEqual(ServiceWorker.TYPE_PERFECTY)
     expect(mockGetRegistration).toHaveBeenCalledTimes(1)
@@ -171,9 +171,9 @@ describe('when getting the installation type', () => {
         getRegistration: mockGetRegistration
       }
     }))
+    ServiceWorker = require('./service_worker').default
 
-    const serviceWorker = new ServiceWorker()
-    const result = await serviceWorker.getInstalledType()
+    const result = await ServiceWorker.getInstalledType()
 
     expect(result).toEqual(ServiceWorker.TYPE_CONFLICT)
     expect(mockGetRegistration).toHaveBeenCalledTimes(1)

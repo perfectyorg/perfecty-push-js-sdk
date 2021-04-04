@@ -15,61 +15,43 @@ jest.mock('../../controls/settings')
 
 beforeEach(() => {
   Storage.mockClear()
-  ServiceWorker.mockClear()
+  ServiceWorker.removeConflicts.mockClear()
+  ServiceWorker.install.mockClear()
   ApiClient.register.mockClear()
   SettingsControl.mockClear()
 })
 
 describe('when assuring the registration', () => {
-  it('removes existing service workers that conflict', () => {
+  it('removes existing service workers that conflict', async () => {
     Options.unregisterConflicts = true
-    const registration = new Registration()
-    registration.assureRegistration()
+    await Registration.assureRegistration()
 
-    const serviceWorkerInstance = ServiceWorker.mock.instances[0]
-    expect(serviceWorkerInstance.removeConflicts).toHaveBeenCalledTimes(1)
+    expect(ServiceWorker.removeConflicts).toHaveBeenCalledTimes(1)
     Options.unregisterConflicts = false
   })
 
   it('register if our service worker is missing', async () => {
-    const mockInstall = jest.fn()
-    ServiceWorker.mockImplementationOnce(() => {
-      return {
-        getInstalledType: () => { return Promise.resolve(ServiceWorker.TYPE_NOTHING) },
-        install: mockInstall
-      }
-    })
+    ServiceWorker.getInstalledType.mockImplementationOnce(() => Promise.resolve(ServiceWorker.TYPE_NOTHING))
 
-    const registration = new Registration()
-    await registration.assureRegistration()
+    await Registration.assureRegistration()
 
-    expect(mockInstall).toHaveBeenCalledTimes(1)
+    expect(ServiceWorker.install).toHaveBeenCalledTimes(1)
   })
 
   it('doesn\'t register if our service worker is present', async () => {
-    const mockInstall = jest.fn()
-    ServiceWorker.mockImplementationOnce(() => {
-      return {
-        getInstalledType: () => { return Promise.resolve(ServiceWorker.TYPE_PERFECTY) },
-        install: mockInstall
-      }
-    })
+    ServiceWorker.getInstalledType.mockImplementationOnce(() => Promise.resolve(ServiceWorker.TYPE_PERFECTY))
 
-    const registration = new Registration()
-    await registration.assureRegistration()
+    await Registration.assureRegistration()
 
-    expect(mockInstall).toHaveBeenCalledTimes(0)
+    expect(ServiceWorker.install).toHaveBeenCalledTimes(0)
   })
 })
 
 describe('when registering the service', () => {
   it('installs the service and calls the api', async () => {
-    const registration = new Registration()
-    await registration.register()
+    await Registration.register()
 
-    const serviceWorkerInstance = ServiceWorker.mock.instances[0]
-
-    expect(serviceWorkerInstance.install).toHaveBeenCalledTimes(1)
+    expect(ServiceWorker.install).toHaveBeenCalledTimes(1)
     expect(ApiClient.register).toHaveBeenCalledTimes(1)
   })
 })

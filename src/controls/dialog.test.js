@@ -24,7 +24,7 @@ describe('when the dialog is created', () => {
     Permission.isGranted.mockClear()
     Permission.askIfNotDenied.mockClear()
     Storage.mockClear()
-    Registration.mockClear()
+    Registration.register.mockClear()
     document.body.innerHTML = ''
   })
 
@@ -89,14 +89,12 @@ describe('when the dialog is created', () => {
     const dialog = new DialogControl()
     dialog.draw()
 
-    const registrationInstance = Registration.mock.instances[0]
-
     expect(isShown()).toEqual(true)
     await simulateClickOnSubscribe()
     expect(isShown()).toEqual(false)
     expect(mockSetHasAskedNotifications).toHaveBeenCalledTimes(1)
     expect(Permission.askIfNotDenied).toHaveBeenCalledTimes(1)
-    expect(registrationInstance.register).toHaveBeenCalledTimes(1)
+    expect(Registration.register).toHaveBeenCalledTimes(1)
   })
 })
 
