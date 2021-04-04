@@ -30,7 +30,7 @@ describe('when the app is started', () => {
     Permission.isGranted.mockClear()
     Features.isSupported.mockClear()
     Registration.assureRegistration.mockClear()
-    Storage.mockClear()
+    Storage.setUserId.mockClear()
     DialogControl.mockClear()
     SettingsControl.mockClear()
     Options.enabled = true
@@ -73,11 +73,10 @@ describe('when the app is started', () => {
     const app = new PerfectyPush()
     const result = await app.start()
 
-    const storageInstance = Storage.mock.instances[0]
     const settingsControlInstance = SettingsControl.mock.instances[0]
     expect(result).toEqual(true)
     expect(Registration.assureRegistration).toHaveBeenCalledTimes(1)
-    expect(storageInstance.setUserId).toHaveBeenCalledTimes(1)
+    expect(Storage.setUserId).toHaveBeenCalledTimes(1)
     expect(settingsControlInstance.setCheckboxActive).toHaveBeenCalledTimes(1)
   })
 
@@ -87,10 +86,9 @@ describe('when the app is started', () => {
     const app = new PerfectyPush()
     const result = await app.start()
 
-    const storageInstance = Storage.mock.instances[0]
     const settingsControlInstance = SettingsControl.mock.instances[0]
     expect(result).toEqual(true)
-    expect(storageInstance.setUserId).toHaveBeenCalledTimes(0)
+    expect(Storage.setUserId).toHaveBeenCalledTimes(0)
     expect(settingsControlInstance.setActive).toHaveBeenCalledTimes(0)
     expect(Registration.assureRegistration).toHaveBeenCalledTimes(1)
   })

@@ -1,12 +1,10 @@
 import 'regenerator-runtime/runtime'
 import Registration from './registration'
 import Options from './options'
-import Storage from './storage'
 import ServiceWorker from './service_worker'
 import ApiClient from './api_client'
 import SettingsControl from '../../controls/settings'
 
-jest.mock('./storage')
 jest.mock('./service_worker')
 jest.mock('./api_client', () => ({
   register: jest.fn(() => Promise.resolve({ uuid: 'mocked-uuid' }))
@@ -14,7 +12,6 @@ jest.mock('./api_client', () => ({
 jest.mock('../../controls/settings')
 
 beforeEach(() => {
-  Storage.mockClear()
   ServiceWorker.removeConflicts.mockClear()
   ServiceWorker.install.mockClear()
   ApiClient.register.mockClear()

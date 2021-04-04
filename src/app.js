@@ -8,7 +8,6 @@ import Storage from './lib/push_api/storage'
 import Logger from './lib/logger'
 
 export default class PerfectyPush {
-  #storage
   #dialogControl
   #settingsControl
 
@@ -19,7 +18,6 @@ export default class PerfectyPush {
   constructor (customOptions = {}) {
     Options.init(customOptions)
 
-    this.#storage = new Storage()
     this.#dialogControl = new DialogControl()
     this.#settingsControl = new SettingsControl()
 
@@ -69,7 +67,7 @@ export default class PerfectyPush {
       const response = await Registration.assureRegistration()
 
       if (response !== false) {
-        this.#storage.setUserId(response.uuid)
+        Storage.setUserId(response.uuid)
         await this.#settingsControl.setCheckboxActive(true)
       }
     } else {

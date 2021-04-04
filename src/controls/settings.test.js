@@ -13,18 +13,12 @@ jest.mock('../lib/push_api/permission', () => ({
 jest.mock('../lib/push_api/api_client', () => ({
   updatePreferences: jest.fn(() => true)
 }))
-
-const mockSetIsUserActive = jest.fn().mockReturnValue(true)
-jest.mock('../lib/push_api/storage', () => {
-  return jest.fn().mockImplementation(() => {
-    return {
-      isUserActive: () => { return true },
-      hasAskedNotifications: () => { return false },
-      userId: () => { return 'mocked-uuid' },
-      setIsUserActive: mockSetIsUserActive
-    }
-  })
-})
+jest.mock('../lib/push_api/storage', () => ({
+  isUserActive: () => true,
+  hasAskedNotifications: () => false,
+  userId: () => 'mocked-uuid',
+  setIsUserActive: jest.fn(() => true)
+}))
 jest.mock('../lib/push_api/registration')
 jest.mock('./dialog')
 
@@ -32,9 +26,8 @@ beforeEach(() => {
   Permission.hasNeverAsked.mockClear()
   Permission.isDenied.mockClear()
   Permission.isGranted.mockClear()
-  Storage.mockClear()
+  Storage.setIsUserActive.mockClear()
   ApiClient.updatePreferences.mockClear()
-  mockSetIsUserActive.mockClear()
   DialogControl.mockClear()
   document.body.innerHTML = ''
 })
@@ -68,7 +61,7 @@ describe('when the subscribed check', () => {
 
     await simulateChangeOnSubscribed(false)
     const notificationControl = document.getElementById('perfecty-push-settings-notification')
-    expect(mockSetIsUserActive).toHaveBeenCalledTimes(1)
+    expect(Storage.setIsUserActive).toHaveBeenCalledTimes(1)
     expect(notificationControl.textContent).toEqual('')
   })
 
@@ -81,7 +74,7 @@ describe('when the subscribed check', () => {
 
     await simulateChangeOnSubscribed(false)
     const notificationControl = document.getElementById('perfecty-push-settings-notification')
-    expect(mockSetIsUserActive).toHaveBeenCalledTimes(0)
+    expect(Storage.setIsUserActive).toHaveBeenCalledTimes(0)
     expect(notificationControl.textContent).toEqual('Could not change the preference, please try again')
   })
 
@@ -93,7 +86,7 @@ describe('when the subscribed check', () => {
 
     await simulateChangeOnSubscribed(true)
     const notificationControl = document.getElementById('perfecty-push-settings-notification')
-    expect(mockSetIsUserActive).toHaveBeenCalledTimes(1)
+    expect(Storage.setIsUserActive).toHaveBeenCalledTimes(1)
     expect(notificationControl.textContent).toEqual('')
   })
 
@@ -108,7 +101,7 @@ describe('when the subscribed check', () => {
     await simulateChangeOnSubscribed(true)
     const notificationControl = document.getElementById('perfecty-push-settings-notification')
     expect(dialogControlInstance.show).toHaveBeenCalledTimes(1)
-    expect(mockSetIsUserActive).toHaveBeenCalledTimes(0)
+    expect(Storage.setIsUserActive).toHaveBeenCalledTimes(0)
     expect(notificationControl.textContent).toEqual('')
   })
 })

@@ -5,11 +5,9 @@ import DialogControl from './dialog'
 import Options from '../lib/push_api/options'
 
 export default class SettingsControl {
-  #storage
   #dialogControl
 
   constructor () {
-    this.#storage = new Storage()
     this.#dialogControl = new DialogControl()
   }
 
@@ -20,7 +18,7 @@ export default class SettingsControl {
 
   #insertHTML () {
     const svg = 'data:image/svg+xml;base64,PHN2ZyBhcmlhLWhpZGRlbj0idHJ1ZSIgZm9jdXNhYmxlPSJmYWxzZSIgZGF0YS1wcmVmaXg9ImZhcyIgZGF0YS1pY29uPSJiZWxsIiBjbGFzcz0ic3ZnLWlubGluZS0tZmEgZmEtYmVsbCBmYS13LTE0IiByb2xlPSJpbWciIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iMCAwIDQ0OCA1MTIiPjxwYXRoIGZpbGw9ImN1cnJlbnRDb2xvciIgZD0iTTIyNCA1MTJjMzUuMzIgMCA2My45Ny0yOC42NSA2My45Ny02NEgxNjAuMDNjMCAzNS4zNSAyOC42NSA2NCA2My45NyA2NHptMjE1LjM5LTE0OS43MWMtMTkuMzItMjAuNzYtNTUuNDctNTEuOTktNTUuNDctMTU0LjI5IDAtNzcuNy01NC40OC0xMzkuOS0xMjcuOTQtMTU1LjE2VjMyYzAtMTcuNjctMTQuMzItMzItMzEuOTgtMzJzLTMxLjk4IDE0LjMzLTMxLjk4IDMydjIwLjg0QzExOC41NiA2OC4xIDY0LjA4IDEzMC4zIDY0LjA4IDIwOGMwIDEwMi4zLTM2LjE1IDEzMy41My01NS40NyAxNTQuMjktNiA2LjQ1LTguNjYgMTQuMTYtOC42MSAyMS43MS4xMSAxNi40IDEyLjk4IDMyIDMyLjEgMzJoMzgzLjhjMTkuMTIgMCAzMi0xNS42IDMyLjEtMzIgLjA1LTcuNTUtMi42MS0xNS4yNy04LjYxLTIxLjcxeiI+PC9wYXRoPjwvc3ZnPg=='
-    const isSubscribed = this.#storage.isUserActive() ? 'checked="checked"' : ''
+    const isSubscribed = Storage.isUserActive() ? 'checked="checked"' : ''
     const html =
         '<div class="perfecty-push-settings-container">' +
         '  <div id="perfecty-push-settings-form">' +
@@ -62,11 +60,11 @@ export default class SettingsControl {
   }
 
   async setActive (isActive) {
-    const userId = this.#storage.userId()
+    const userId = Storage.userId()
     const success = await ApiClient.updatePreferences(userId, isActive)
     if (success === true) {
       this.setCheckboxActive(isActive)
-      this.#storage.setIsUserActive(isActive)
+      Storage.setIsUserActive(isActive)
       this.#showMessage('')
     } else {
       this.#showMessage('Could not change the preference, please try again')

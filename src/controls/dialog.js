@@ -5,12 +5,6 @@ import Logger from '../lib/logger'
 import Options from '../lib/push_api/options'
 
 export default class DialogControl {
-  #storage
-
-  constructor () {
-    this.#storage = new Storage()
-  }
-
   draw () {
     Logger.debug('Drawing dialog')
 
@@ -38,7 +32,7 @@ export default class DialogControl {
   #subscribeToEvents () {
     document.getElementById('perfecty-push-dialog-subscribe').onclick = async () => {
       Logger.info('User is accepting the subscription')
-      this.#storage.setHasAskedNotifications(true)
+      Storage.setHasAskedNotifications(true)
       this.#hide()
 
       await Permission.askIfNotDenied()
@@ -50,13 +44,13 @@ export default class DialogControl {
     }
 
     document.getElementById('perfecty-push-dialog-cancel').onclick = () => {
-      this.#storage.setHasAskedNotifications(true)
+      Storage.setHasAskedNotifications(true)
       this.#hide()
     }
   }
 
   #showDialogToUnsubscribedUser () {
-    if (Permission.hasNeverAsked() && !this.#storage.hasAskedNotifications()) {
+    if (Permission.hasNeverAsked() && !Storage.hasAskedNotifications()) {
       this.show()
     } else {
       Logger.debug('Dialog control not displayed: permissions already asked or already granted')

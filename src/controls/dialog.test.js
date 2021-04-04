@@ -9,13 +9,10 @@ jest.mock('../lib/push_api/permission', () => ({
   isGranted: jest.fn().mockImplementation(() => true),
   askIfNotDenied: jest.fn().mockReturnValueOnce('granted')
 }))
-jest.mock('../lib/push_api/storage', () => {
-  return jest.fn().mockImplementation(() => {
-    return {
-      hasAskedNotifications: () => { return false }
-    }
-  })
-})
+jest.mock('../lib/push_api/storage', () => ({
+  hasAskedNotifications: jest.fn(() => false),
+  setHasAskedNotifications: jest.fn(() => true)
+}))
 jest.mock('../lib/push_api/registration')
 
 describe('when the dialog is created', () => {
@@ -23,7 +20,8 @@ describe('when the dialog is created', () => {
     Permission.hasNeverAsked.mockClear()
     Permission.isGranted.mockClear()
     Permission.askIfNotDenied.mockClear()
-    Storage.mockClear()
+    Storage.hasAskedNotifications.mockClear()
+    Storage.setHasAskedNotifications.mockClear()
     Registration.register.mockClear()
     document.body.innerHTML = ''
   })
@@ -47,11 +45,7 @@ describe('when the dialog is created', () => {
   })
 
   it('is hidden to unsubscribed users and already asked to subscribe', () => {
-    Storage.mockImplementationOnce(() => {
-      return {
-        hasAskedNotifications: () => { return true }
-      }
-    })
+    Storage.hasAskedNotifications.mockImplementationOnce(() => true)
 
     const dialog = new DialogControl()
     dialog.draw()
@@ -60,39 +54,23 @@ describe('when the dialog is created', () => {
   })
 
   it('hides when cancel is clicked', async () => {
-    const mockSetHasAskedNotifications = jest.fn().mockReturnValueOnce(true)
-    Storage.mockImplementationOnce(() => {
-      return {
-        hasAskedNotifications: () => { return false },
-        setHasAskedNotifications: mockSetHasAskedNotifications
-      }
-    })
-
     const dialog = new DialogControl()
     dialog.draw()
 
     expect(isShown()).toEqual(true)
     await simulateClickOnCancel()
     expect(isShown()).toEqual(false)
-    expect(mockSetHasAskedNotifications).toHaveBeenCalledTimes(1)
+    expect(Storage.setHasAskedNotifications).toHaveBeenCalledTimes(1)
   })
 
   it('register user when subscribe is clicked and permission is granted', async () => {
-    const mockSetHasAskedNotifications = jest.fn().mockReturnValueOnce(true)
-    Storage.mockImplementationOnce(() => {
-      return {
-        hasAskedNotifications: () => { return false },
-        setHasAskedNotifications: mockSetHasAskedNotifications
-      }
-    })
-
     const dialog = new DialogControl()
     dialog.draw()
 
     expect(isShown()).toEqual(true)
     await simulateClickOnSubscribe()
     expect(isShown()).toEqual(false)
-    expect(mockSetHasAskedNotifications).toHaveBeenCalledTimes(1)
+    expect(Storage.setHasAskedNotifications).toHaveBeenCalledTimes(1)
     expect(Permission.askIfNotDenied).toHaveBeenCalledTimes(1)
     expect(Registration.register).toHaveBeenCalledTimes(1)
   })

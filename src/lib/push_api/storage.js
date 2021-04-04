@@ -1,41 +1,52 @@
-export default class Storage {
-  #userIdKey = 'perfecty_user_id'
-  #hasAskedNotificationsKey = 'perfecty_asked_notifications'
-  #isUserActiveKey = 'perfecty_is_user_active'
+const Storage = (() => {
+  const userIdKey = 'perfecty_user_id'
+  const hasAskedNotificationsKey = 'perfecty_asked_notifications'
+  const isUserActiveKey = 'perfecty_is_user_active'
 
-  setUserId (id) {
-    this.#setItem(this.#userIdKey, id)
+  const setUserId = (id) => {
+    setItem(userIdKey, id)
   }
 
-  userId () {
-    return this.#getItem(this.#userIdKey)
+  const userId = () => {
+    return getItem(userIdKey)
   }
 
-  setHasAskedNotifications (value) {
+  const setHasAskedNotifications = (value) => {
     value = value === true ? 'yes' : 'no'
-    this.#setItem(this.#hasAskedNotificationsKey, value)
+    setItem(hasAskedNotificationsKey, value)
   }
 
-  hasAskedNotifications () {
-    const value = this.#getItem(this.#hasAskedNotificationsKey)
+  const hasAskedNotifications = () => {
+    const value = getItem(hasAskedNotificationsKey)
     return value === 'yes'
   }
 
-  setIsUserActive (value) {
+  const setIsUserActive = (value) => {
     value = value === true ? 'yes' : 'no'
-    this.#setItem(this.#isUserActiveKey, value)
+    setItem(isUserActiveKey, value)
   }
 
-  isUserActive () {
-    const value = this.#getItem(this.#isUserActiveKey)
+  const isUserActive = () => {
+    const value = getItem(isUserActiveKey)
     return value === 'yes'
   }
 
-  #getItem (key) {
+  const getItem = (key) => {
     return localStorage.getItem(key)
   }
 
-  #setItem (key, value) {
+  const setItem = (key, value) => {
     localStorage.setItem(key, value)
   }
-}
+
+  return {
+    setUserId,
+    userId,
+    setHasAskedNotifications,
+    hasAskedNotifications,
+    setIsUserActive,
+    isUserActive
+  }
+})()
+
+export default Storage
