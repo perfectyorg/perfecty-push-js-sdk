@@ -8,19 +8,15 @@ import SettingsControl from '../../controls/settings'
 
 jest.mock('./storage')
 jest.mock('./service_worker')
-const mockApiClientRegister = jest.fn().mockReturnValueOnce(Promise.resolve({ uuid: 'mocked-uuid' }))
-jest.mock('./api_client', () => {
-  return jest.fn().mockImplementation(() => {
-    return { register: mockApiClientRegister }
-  })
-})
+jest.mock('./api_client', () => ({
+  register: jest.fn(() => Promise.resolve({ uuid: 'mocked-uuid' }))
+}))
 jest.mock('../../controls/settings')
 
 beforeEach(() => {
   Storage.mockClear()
   ServiceWorker.mockClear()
-  ApiClient.mockClear()
-  mockApiClientRegister.mockClear()
+  ApiClient.register.mockClear()
   SettingsControl.mockClear()
 })
 
@@ -74,6 +70,6 @@ describe('when registering the service', () => {
     const serviceWorkerInstance = ServiceWorker.mock.instances[0]
 
     expect(serviceWorkerInstance.install).toHaveBeenCalledTimes(1)
-    expect(mockApiClientRegister).toHaveBeenCalledTimes(1)
+    expect(ApiClient.register).toHaveBeenCalledTimes(1)
   })
 })

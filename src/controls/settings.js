@@ -6,12 +6,10 @@ import Options from '../lib/push_api/options'
 
 export default class SettingsControl {
   #storage
-  #apiClient
   #dialogControl
 
   constructor () {
     this.#storage = new Storage()
-    this.#apiClient = new ApiClient()
     this.#dialogControl = new DialogControl()
   }
 
@@ -65,7 +63,7 @@ export default class SettingsControl {
 
   async setActive (isActive) {
     const userId = this.#storage.userId()
-    const success = await this.#apiClient.updatePreferences(userId, isActive)
+    const success = await ApiClient.updatePreferences(userId, isActive)
     if (success === true) {
       this.setCheckboxActive(isActive)
       this.#storage.setIsUserActive(isActive)

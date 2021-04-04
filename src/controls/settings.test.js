@@ -10,6 +10,9 @@ jest.mock('../lib/push_api/permission', () => ({
   isDenied: jest.fn().mockImplementation(() => false),
   isGranted: jest.fn().mockImplementation(() => true)
 }))
+jest.mock('../lib/push_api/api_client', () => ({
+  updatePreferences: jest.fn(() => true)
+}))
 
 const mockSetIsUserActive = jest.fn().mockReturnValue(true)
 jest.mock('../lib/push_api/storage', () => {
@@ -23,7 +26,6 @@ jest.mock('../lib/push_api/storage', () => {
   })
 })
 jest.mock('../lib/push_api/registration')
-jest.mock('../lib/push_api/api_client')
 jest.mock('./dialog')
 
 beforeEach(() => {
@@ -31,7 +33,7 @@ beforeEach(() => {
   Permission.isDenied.mockClear()
   Permission.isGranted.mockClear()
   Storage.mockClear()
-  ApiClient.mockClear()
+  ApiClient.updatePreferences.mockClear()
   mockSetIsUserActive.mockClear()
   DialogControl.mockClear()
   document.body.innerHTML = ''
@@ -59,11 +61,6 @@ describe('when the control is created', () => {
 
 describe('when the subscribed check', () => {
   it('is unchecked, user is set as inactive', async () => {
-    ApiClient.mockImplementationOnce(() => {
-      return {
-        updatePreferences: () => { return true }
-      }
-    })
     Permission.hasNeverAsked.mockImplementationOnce(() => false)
 
     const dialog = new SettingsControl()
@@ -76,11 +73,7 @@ describe('when the subscribed check', () => {
   })
 
   it('is unchecked and there\'s an error, show message', async () => {
-    ApiClient.mockImplementationOnce(() => {
-      return {
-        updatePreferences: () => { return false }
-      }
-    })
+    ApiClient.updatePreferences.mockImplementationOnce(() => false)
     Permission.hasNeverAsked.mockImplementationOnce(() => false)
 
     const dialog = new SettingsControl()
@@ -93,11 +86,6 @@ describe('when the subscribed check', () => {
   })
 
   it('is checked and permissions are granted, sets the user active', async () => {
-    ApiClient.mockImplementationOnce(() => {
-      return {
-        updatePreferences: () => { return true }
-      }
-    })
     Permission.hasNeverAsked.mockImplementationOnce(() => false)
 
     const dialog = new SettingsControl()

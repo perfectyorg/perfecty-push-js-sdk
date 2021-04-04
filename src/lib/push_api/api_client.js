@@ -1,8 +1,8 @@
 import Logger from '../logger'
 import Options from './options'
 
-export default class ApiClient {
-  async register (pushSubscription) {
+const ApiClient = (() => {
+  const register = async (pushSubscription) => {
     Logger.info('Registering user in the server')
 
     const path = `${Options.serverUrl}/v1/public/users`
@@ -12,7 +12,7 @@ export default class ApiClient {
 
     const body = await fetch(path, {
       method: 'post',
-      headers: this.#getHeaders(),
+      headers: getHeaders(),
       body: bodyContent
     })
     const response = await body.json()
@@ -27,7 +27,7 @@ export default class ApiClient {
     }
   }
 
-  async updatePreferences (userId, isActive) {
+  const updatePreferences = async (userId, isActive) => {
     Logger.info('Updating user preferences')
     Logger.debug(`User: ${userId}, isActive: ${isActive}`)
 
@@ -38,7 +38,7 @@ export default class ApiClient {
 
     const body = await fetch(path, {
       method: 'post',
-      headers: this.#getHeaders(),
+      headers: getHeaders(),
       body: bodyContent
     })
     const response = await body.json()
@@ -53,11 +53,18 @@ export default class ApiClient {
     }
   }
 
-  #getHeaders () {
+  const getHeaders = () => {
     const headers = {
       'Content-Type': 'application/json'
     }
     headers[Options.tokenHeader] = Options.token
     return headers
   }
-}
+
+  return {
+    register,
+    updatePreferences
+  }
+})()
+
+export default ApiClient

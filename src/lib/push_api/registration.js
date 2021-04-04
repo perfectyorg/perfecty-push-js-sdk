@@ -8,11 +8,9 @@ import Options from './options'
  */
 export default class Registration {
   #serviceWorker
-  #apiClient
 
   constructor () {
     this.#serviceWorker = new ServiceWorker()
-    this.#apiClient = new ApiClient()
   }
 
   async assureRegistration () {
@@ -26,7 +24,7 @@ export default class Registration {
     Logger.info('Registering user')
 
     const pushSubscription = await this.#serviceWorker.install()
-    return await this.#apiClient.register(pushSubscription)
+    return await ApiClient.register(pushSubscription)
   }
 
   async #removeConflicts () {
