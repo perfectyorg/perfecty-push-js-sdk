@@ -1,11 +1,9 @@
 import Features from './features'
 
 let windowSpy
-let features
 
 beforeEach(() => {
   windowSpy = jest.spyOn(window, 'window', 'get')
-  features = new Features()
 })
 
 afterEach(() => {
@@ -18,7 +16,7 @@ it('are present', () => {
     navigator: { serviceWorker: {} }
   }))
 
-  const res = features.isSupported()
+  const res = Features.isSupported()
   expect(res).toEqual(true)
 })
 
@@ -28,7 +26,7 @@ it('some are not present', () => {
     navigator: {}
   }))
 
-  const res = features.isSupported()
+  const res = Features.isSupported()
   expect(res).toEqual(false)
 })
 
@@ -37,6 +35,6 @@ it('none are present', () => {
     navigator: {}
   }))
 
-  const res = features.isSupported()
+  const res = Features.isSupported()
   expect(res).toEqual(false)
 })

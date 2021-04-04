@@ -11,15 +11,13 @@ import Options from './lib/push_api/options'
 jest.mock('./lib/push_api/permission', () => ({
   __esModule: true,
   default: {
-    isGranted: jest.fn().mockImplementation(() => true)
+    isGranted: jest.fn(() => true)
   }
 }))
 
-jest.mock('./lib/push_api/features', () => {
-  return jest.fn().mockImplementation(() => {
-    return { isSupported: () => { return true } }
-  })
-})
+jest.mock('./lib/push_api/features', () => ({
+  isSupported: jest.fn(() => true)
+}))
 const mockAssureRegistration = jest.fn().mockReturnValue(Promise.resolve({ uuid: 'mocked-uuid' }))
 jest.mock('./lib/push_api/registration', () => {
   return jest.fn().mockImplementation(() => {
@@ -33,7 +31,7 @@ jest.mock('./controls/settings')
 describe('when the app is started', () => {
   beforeEach(() => {
     Permission.isGranted.mockClear()
-    Features.mockClear()
+    Features.isSupported.mockClear()
     Registration.mockClear()
     mockAssureRegistration.mockClear()
     Storage.mockClear()
@@ -55,17 +53,12 @@ describe('when the app is started', () => {
   })
 
   it('doesn\'t start if unsupported features', async () => {
-    const mockIsSupported = jest.fn().mockReturnValueOnce(false)
-    Features.mockImplementationOnce(() => {
-      return {
-        isSupported: mockIsSupported
-      }
-    })
+    Features.isSupported.mockImplementationOnce(() => false)
 
     const app = new PerfectyPush()
     const result = await app.start()
     expect(result).toEqual(false)
-    expect(mockIsSupported).toHaveBeenCalledTimes(1)
+    expect(Features.isSupported).toHaveBeenCalledTimes(1)
   })
 
   it('draws the controls', async () => {

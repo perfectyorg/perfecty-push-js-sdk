@@ -8,7 +8,6 @@ import Storage from './lib/push_api/storage'
 import Logger from './lib/logger'
 
 export default class PerfectyPush {
-  #features
   #registration
   #storage
   #dialogControl
@@ -21,7 +20,6 @@ export default class PerfectyPush {
   constructor (customOptions = {}) {
     Options.init(customOptions)
 
-    this.#features = new Features()
     this.#registration = new Registration()
     this.#storage = new Storage()
     this.#dialogControl = new DialogControl()
@@ -55,7 +53,7 @@ export default class PerfectyPush {
    * @returns {*|boolean} true if supported and enabled, otherwise false
    */
   #isSupportedAndEnabled () {
-    return (this.#features.isSupported() && Options.enabled)
+    return (Features.isSupported() && Options.enabled)
   }
 
   #drawHtmlControls () {
