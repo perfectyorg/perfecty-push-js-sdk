@@ -8,16 +8,12 @@ import Storage from './lib/push_api/storage'
 import Logger from './lib/logger'
 
 export default class PerfectyPush {
-  #settingsControl
-
   /**
    * Constructor
    * @param customOptions object with all the custom options as properties
    */
   constructor (customOptions = {}) {
     Options.init(customOptions)
-
-    this.#settingsControl = new SettingsControl()
 
     Logger.setup({ verbose: Options.loggerVerbose, level: Options.loggerLevel })
   }
@@ -54,7 +50,7 @@ export default class PerfectyPush {
     Logger.info('Drawing controls')
 
     DialogControl.draw()
-    this.#settingsControl.draw()
+    SettingsControl.draw()
   }
 
   async #checkRegistration () {
@@ -66,7 +62,7 @@ export default class PerfectyPush {
 
       if (response !== false) {
         Storage.setUserId(response.uuid)
-        await this.#settingsControl.setCheckboxActive(true)
+        await SettingsControl.setCheckboxActive(true)
       }
     } else {
       Logger.info('The site has not permissions granted')

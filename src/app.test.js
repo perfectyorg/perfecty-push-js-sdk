@@ -32,7 +32,9 @@ describe('when the app is started', () => {
     Registration.assureRegistration.mockClear()
     Storage.setUserId.mockClear()
     DialogControl.draw.mockClear()
-    SettingsControl.mockClear()
+    SettingsControl.draw.mockClear()
+    SettingsControl.setCheckboxActive.mockClear()
+    SettingsControl.setActive.mockClear()
     Options.enabled = true
   })
 
@@ -61,22 +63,19 @@ describe('when the app is started', () => {
     const app = new PerfectyPush()
     const result = await app.start()
 
-    const settingsInstance = SettingsControl.mock.instances[0]
-
     expect(result).toEqual(true)
     expect(DialogControl.draw).toHaveBeenCalledTimes(1)
-    expect(settingsInstance.draw).toHaveBeenCalledTimes(1)
+    expect(SettingsControl.draw).toHaveBeenCalledTimes(1)
   })
 
   it('register service if permission granted', async () => {
     const app = new PerfectyPush()
     const result = await app.start()
 
-    const settingsControlInstance = SettingsControl.mock.instances[0]
     expect(result).toEqual(true)
     expect(Registration.assureRegistration).toHaveBeenCalledTimes(1)
     expect(Storage.setUserId).toHaveBeenCalledTimes(1)
-    expect(settingsControlInstance.setCheckboxActive).toHaveBeenCalledTimes(1)
+    expect(SettingsControl.setCheckboxActive).toHaveBeenCalledTimes(1)
   })
 
   it('register service if permission granted but unsuccessful', async () => {
@@ -85,10 +84,9 @@ describe('when the app is started', () => {
     const app = new PerfectyPush()
     const result = await app.start()
 
-    const settingsControlInstance = SettingsControl.mock.instances[0]
     expect(result).toEqual(true)
     expect(Storage.setUserId).toHaveBeenCalledTimes(0)
-    expect(settingsControlInstance.setActive).toHaveBeenCalledTimes(0)
+    expect(SettingsControl.setActive).toHaveBeenCalledTimes(0)
     expect(Registration.assureRegistration).toHaveBeenCalledTimes(1)
   })
 

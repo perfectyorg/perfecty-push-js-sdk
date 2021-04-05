@@ -3,7 +3,6 @@ import Registration from './registration'
 import Options from './options'
 import ServiceWorker from './service_worker'
 import ApiClient from './api_client'
-import SettingsControl from '../../controls/settings'
 
 jest.mock('./service_worker')
 jest.mock('./api_client', () => ({
@@ -15,7 +14,6 @@ beforeEach(() => {
   ServiceWorker.removeConflicts.mockClear()
   ServiceWorker.install.mockClear()
   ApiClient.register.mockClear()
-  SettingsControl.mockClear()
 })
 
 describe('when assuring the registration', () => {
