@@ -2,7 +2,6 @@ import 'regenerator-runtime/runtime'
 import Permission from './lib/push_api/permission'
 import Features from './lib/push_api/features'
 import Registration from './lib/push_api/registration'
-import Storage from './lib/push_api/storage'
 import DialogControl from './controls/dialog'
 import SettingsControl from './controls/settings'
 import PerfectyPush from './app'
@@ -21,7 +20,6 @@ jest.mock('./lib/push_api/features', () => ({
 jest.mock('./lib/push_api/registration', () => ({
   assureRegistration: jest.fn(() => Promise.resolve({ uuid: 'mocked-uuid' }))
 }))
-jest.mock('./lib/push_api/storage')
 jest.mock('./controls/dialog')
 jest.mock('./controls/settings')
 
@@ -30,7 +28,6 @@ describe('when the app is started', () => {
     Permission.isGranted.mockClear()
     Features.isSupported.mockClear()
     Registration.assureRegistration.mockClear()
-    Storage.setUserId.mockClear()
     DialogControl.draw.mockClear()
     SettingsControl.draw.mockClear()
     SettingsControl.setCheckboxActive.mockClear()
@@ -69,7 +66,6 @@ describe('when the app is started', () => {
 
     expect(result).toEqual(true)
     expect(Registration.assureRegistration).toHaveBeenCalledTimes(1)
-    expect(Storage.setUserId).toHaveBeenCalledTimes(1)
     expect(SettingsControl.setCheckboxActive).toHaveBeenCalledTimes(1)
   })
 
@@ -79,7 +75,6 @@ describe('when the app is started', () => {
     const result = await PerfectyPush.start()
 
     expect(result).toEqual(true)
-    expect(Storage.setUserId).toHaveBeenCalledTimes(0)
     expect(SettingsControl.setActive).toHaveBeenCalledTimes(0)
     expect(Registration.assureRegistration).toHaveBeenCalledTimes(1)
   })

@@ -7,7 +7,6 @@ const ServiceWorker = (() => {
   const TYPE_CONFLICT = 2
   const TYPE_PERFECTY = 3
 
-  const scope = '/'
   const workerContainer = navigator.serviceWorker
   let workerValue
 
@@ -26,7 +25,7 @@ const ServiceWorker = (() => {
     Logger.info('Installing service worker')
 
     const fullPath = Options.path + '/service-worker-loader.js.php'
-    await workerContainer.register(fullPath, { scope: scope })
+    await workerContainer.register(fullPath, { scope: Options.serviceWorkerScope })
     const registration = await getWorker()
     const pushSubscription = await getPushSubscription(registration)
 
@@ -60,7 +59,7 @@ const ServiceWorker = (() => {
 
   const getWorker = async () => {
     if (!workerValue) {
-      workerValue = await workerContainer.getRegistration(scope)
+      workerValue = await workerContainer.getRegistration(Options.serviceWorkerScope)
     }
     return workerValue
   }

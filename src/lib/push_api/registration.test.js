@@ -3,17 +3,20 @@ import Registration from './registration'
 import Options from './options'
 import ServiceWorker from './service_worker'
 import ApiClient from './api_client'
+import Storage from './storage'
 
 jest.mock('./service_worker')
 jest.mock('./api_client', () => ({
   register: jest.fn(() => Promise.resolve({ uuid: 'mocked-uuid' }))
 }))
 jest.mock('../../controls/settings')
+jest.mock('./storage')
 
 beforeEach(() => {
   ServiceWorker.removeConflicts.mockClear()
   ServiceWorker.install.mockClear()
   ApiClient.register.mockClear()
+  Storage.setUserId.mockClear()
 })
 
 describe('when assuring the registration', () => {
@@ -48,5 +51,6 @@ describe('when registering the service', () => {
 
     expect(ServiceWorker.install).toHaveBeenCalledTimes(1)
     expect(ApiClient.register).toHaveBeenCalledTimes(1)
+    expect(Storage.setUserId).toHaveBeenCalledTimes(1)
   })
 })

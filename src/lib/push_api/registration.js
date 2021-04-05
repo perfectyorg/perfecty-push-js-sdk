@@ -2,6 +2,7 @@ import ServiceWorker from './service_worker'
 import ApiClient from './api_client'
 import Logger from '../logger'
 import Options from './options'
+import Storage from './storage'
 
 /**
  * Registration Register the Service Worker
@@ -18,7 +19,11 @@ const Registration = (() => {
     Logger.info('Registering user')
 
     const pushSubscription = await ServiceWorker.install()
-    return await ApiClient.register(pushSubscription)
+    const response = await ApiClient.register(pushSubscription)
+    if (response !== false) {
+      Storage.setUserId(response.uuid)
+    }
+    return response
   }
 
   const removeConflicts = async () => {

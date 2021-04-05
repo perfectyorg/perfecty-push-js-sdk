@@ -1,7 +1,5 @@
 {
   "presets": [
-    ["@babel/preset-env", {
-      "shippedProposals": true
-    }]
+    ["@babel/preset-env"]
   ]
 }

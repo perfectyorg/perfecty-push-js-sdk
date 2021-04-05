@@ -4,7 +4,6 @@ import SettingsControl from './controls/settings'
 import Registration from './lib/push_api/registration'
 import Permission from './lib/push_api/permission'
 import Features from './lib/push_api/features'
-import Storage from './lib/push_api/storage'
 import Logger from './lib/logger'
 
 const PerfectyPush = (() => {
@@ -55,7 +54,6 @@ const PerfectyPush = (() => {
       const response = await Registration.assureRegistration()
 
       if (response !== false) {
-        Storage.setUserId(response.uuid)
         await SettingsControl.setCheckboxActive(true)
       }
     } else {
