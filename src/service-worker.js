@@ -1,15 +1,15 @@
 /**
- Service Worker class
+ Service Worker module
  */
-class ServiceWorker {
+const ServiceWorker = (() => {
   /**
    * Receives a push event and shows the notification to the user
    * @param event
    * @returns {Promise<void>}
    */
-  static async notify (event) {
+  const notify = async (event) => {
     try {
-      const data = await ServiceWorker.#getContent(event)
+      const data = await getContent(event)
       const title = data.title
       const options = {
         icon: data.icon,
@@ -30,7 +30,7 @@ class ServiceWorker {
    * Opens the url that comes in the event
    * @param event
    */
-  static openWindow (event) {
+  const openWindow = (event) => {
     event.notification.close()
 
     const url = event.notification.data.url
@@ -42,13 +42,18 @@ class ServiceWorker {
    * @param event
    * @returns {*}
    */
-  static #getContent (event) {
+  const getContent = (event) => {
     if (!event.data) {
       throw Error('No payload was sent in the push message')
     }
     return event.data.json()
   }
-}
+
+  return {
+    notify,
+    openWindow
+  }
+})()
 
 self.addEventListener('push', async (event) => {
   event.waitUntil(ServiceWorker.notify(event))
