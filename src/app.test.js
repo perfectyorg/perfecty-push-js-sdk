@@ -39,29 +39,25 @@ describe('when the app is started', () => {
   })
 
   it('works with supported features and enabled', async () => {
-    const app = new PerfectyPush()
-    const result = await app.start()
+    const result = await PerfectyPush.start()
     expect(result).toEqual(true)
   })
 
   it('doesn\'t start if disabled', async () => {
-    const app = new PerfectyPush({ enabled: false })
-    const result = await app.start()
+    const result = await PerfectyPush.start({ enabled: false })
     expect(result).toEqual(false)
   })
 
   it('doesn\'t start if unsupported features', async () => {
     Features.isSupported.mockImplementationOnce(() => false)
 
-    const app = new PerfectyPush()
-    const result = await app.start()
+    const result = await PerfectyPush.start()
     expect(result).toEqual(false)
     expect(Features.isSupported).toHaveBeenCalledTimes(1)
   })
 
   it('draws the controls', async () => {
-    const app = new PerfectyPush()
-    const result = await app.start()
+    const result = await PerfectyPush.start()
 
     expect(result).toEqual(true)
     expect(DialogControl.draw).toHaveBeenCalledTimes(1)
@@ -69,8 +65,7 @@ describe('when the app is started', () => {
   })
 
   it('register service if permission granted', async () => {
-    const app = new PerfectyPush()
-    const result = await app.start()
+    const result = await PerfectyPush.start()
 
     expect(result).toEqual(true)
     expect(Registration.assureRegistration).toHaveBeenCalledTimes(1)
@@ -81,8 +76,7 @@ describe('when the app is started', () => {
   it('register service if permission granted but unsuccessful', async () => {
     Registration.assureRegistration.mockImplementationOnce(() => Promise.resolve(false))
 
-    const app = new PerfectyPush()
-    const result = await app.start()
+    const result = await PerfectyPush.start()
 
     expect(result).toEqual(true)
     expect(Storage.setUserId).toHaveBeenCalledTimes(0)
@@ -93,8 +87,7 @@ describe('when the app is started', () => {
   it('doesn\'t register service if permission is not granted', async () => {
     Permission.isGranted.mockImplementationOnce(() => false)
 
-    const app = new PerfectyPush()
-    const result = await app.start()
+    const result = await PerfectyPush.start()
 
     expect(result).toEqual(true)
     expect(Registration.assureRegistration).toHaveBeenCalledTimes(0)

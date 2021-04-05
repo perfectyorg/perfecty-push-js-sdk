@@ -7,32 +7,26 @@ import Features from './lib/push_api/features'
 import Storage from './lib/push_api/storage'
 import Logger from './lib/logger'
 
-export default class PerfectyPush {
-  /**
-   * Constructor
-   * @param customOptions object with all the custom options as properties
-   */
-  constructor (customOptions = {}) {
-    Options.init(customOptions)
-
-    Logger.setup({ verbose: Options.loggerVerbose, level: Options.loggerLevel })
-  }
-
+const PerfectyPush = (() => {
   /**
    * Start Perfecty Push if the requirements are fulfilled
+   * @param customOptions object with all the custom options as properties
    * @returns {boolean} true if successful, otherwise false
    */
-  async start () {
+  const start = async (customOptions = {}) => {
+    Options.init(customOptions)
+    Logger.setup({ verbose: Options.loggerVerbose, level: Options.loggerLevel })
+
     Logger.info('Starting Perfecty Push SDK')
     Logger.debug('SDK options', Options)
 
-    if (!this.#isSupportedAndEnabled()) {
+    if (!isSupportedAndEnabled()) {
       Logger.info('Browser is not supported or the SDK is not enabled')
       return false
     }
 
-    this.#drawHtmlControls()
-    await this.#checkRegistration()
+    drawHtmlControls()
+    await checkRegistration()
 
     Logger.info('Perfecty Push SDK was started')
     return true
@@ -42,18 +36,18 @@ export default class PerfectyPush {
    * Check if the browser has the required features and if Perfecty is enabled
    * @returns {*|boolean} true if supported and enabled, otherwise false
    */
-  #isSupportedAndEnabled () {
+  const isSupportedAndEnabled = () => {
     return (Features.isSupported() && Options.enabled)
   }
 
-  #drawHtmlControls () {
+  const drawHtmlControls = () => {
     Logger.info('Drawing controls')
 
     DialogControl.draw()
     SettingsControl.draw()
   }
 
-  async #checkRegistration () {
+  const checkRegistration = async () => {
     Logger.info('Checking user registration')
     if (Permission.isGranted()) {
       Logger.info('The site has permissions granted')
@@ -68,9 +62,14 @@ export default class PerfectyPush {
       Logger.info('The site has not permissions granted')
     }
   }
-}
+
+  return {
+    start
+  }
+})()
+
+export default PerfectyPush
 
 window.onload = () => {
-  const app = new PerfectyPush(window.PerfectyPushOptions)
-  app.start()
+  PerfectyPush.start(window.PerfectyPushOptions)
 }
