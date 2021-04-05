@@ -4,16 +4,22 @@ import Registration from '../lib/push_api/registration'
 import Logger from '../lib/logger'
 import Options from '../lib/push_api/options'
 
-export default class DialogControl {
-  draw () {
+const DialogControl = (() => {
+  const draw = () => {
     Logger.debug('Drawing dialog')
 
-    this.#insertHTML()
-    this.#subscribeToEvents()
-    this.#showDialogToUnsubscribedUser()
+    insertHTML()
+    subscribeToEvents()
+    showDialogToUnsubscribedUser()
   }
 
-  #insertHTML () {
+  const show = () => {
+    Logger.debug('Showing dialog')
+    const control = document.getElementById('perfecty-push-dialog-container')
+    control.style.display = 'block'
+  }
+
+  const insertHTML = () => {
     const html =
         '<div class="site perfecty-push-dialog-container" id="perfecty-push-dialog-container">' +
         '  <div class="perfecty-push-dialog-box">' +
@@ -26,14 +32,14 @@ export default class DialogControl {
         '</div>'
 
     document.body.insertAdjacentHTML('beforeend', html)
-    this.#hide()
+    hide()
   }
 
-  #subscribeToEvents () {
+  const subscribeToEvents = () => {
     document.getElementById('perfecty-push-dialog-subscribe').onclick = async () => {
       Logger.info('User is accepting the subscription')
       Storage.setHasAskedNotifications(true)
-      this.#hide()
+      hide()
 
       await Permission.askIfNotDenied()
       if (Permission.isGranted()) {
@@ -45,27 +51,28 @@ export default class DialogControl {
 
     document.getElementById('perfecty-push-dialog-cancel').onclick = () => {
       Storage.setHasAskedNotifications(true)
-      this.#hide()
+      hide()
     }
   }
 
-  #showDialogToUnsubscribedUser () {
+  const showDialogToUnsubscribedUser = () => {
     if (Permission.hasNeverAsked() && !Storage.hasAskedNotifications()) {
-      this.show()
+      show()
     } else {
       Logger.debug('Dialog control not displayed: permissions already asked or already granted')
     }
   }
 
-  show () {
-    Logger.debug('Showing dialog')
-    const control = document.getElementById('perfecty-push-dialog-container')
-    control.style.display = 'block'
-  }
-
-  #hide () {
+  const hide = () => {
     Logger.debug('Hiding dialog')
     const control = document.getElementById('perfecty-push-dialog-container')
     control.style.display = 'none'
   }
-}
+
+  return {
+    draw,
+    show
+  }
+})()
+
+export default DialogControl

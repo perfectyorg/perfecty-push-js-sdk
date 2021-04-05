@@ -5,12 +5,6 @@ import DialogControl from './dialog'
 import Options from '../lib/push_api/options'
 
 export default class SettingsControl {
-  #dialogControl
-
-  constructor () {
-    this.#dialogControl = new DialogControl()
-  }
-
   draw () {
     this.#insertHTML()
     this.#subscribeToEvents()
@@ -45,7 +39,7 @@ export default class SettingsControl {
       const checked = e.target.checked
 
       if (Permission.hasNeverAsked()) {
-        this.#dialogControl.show()
+        DialogControl.show()
       } else if (Permission.isDenied()) {
         this.#showMessage('You need to allow notifications')
       } else if (Permission.isGranted()) {

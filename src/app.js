@@ -8,7 +8,6 @@ import Storage from './lib/push_api/storage'
 import Logger from './lib/logger'
 
 export default class PerfectyPush {
-  #dialogControl
   #settingsControl
 
   /**
@@ -18,7 +17,6 @@ export default class PerfectyPush {
   constructor (customOptions = {}) {
     Options.init(customOptions)
 
-    this.#dialogControl = new DialogControl()
     this.#settingsControl = new SettingsControl()
 
     Logger.setup({ verbose: Options.loggerVerbose, level: Options.loggerLevel })
@@ -55,7 +53,7 @@ export default class PerfectyPush {
   #drawHtmlControls () {
     Logger.info('Drawing controls')
 
-    this.#dialogControl.draw()
+    DialogControl.draw()
     this.#settingsControl.draw()
   }
 

@@ -31,7 +31,7 @@ describe('when the app is started', () => {
     Features.isSupported.mockClear()
     Registration.assureRegistration.mockClear()
     Storage.setUserId.mockClear()
-    DialogControl.mockClear()
+    DialogControl.draw.mockClear()
     SettingsControl.mockClear()
     Options.enabled = true
   })
@@ -61,11 +61,10 @@ describe('when the app is started', () => {
     const app = new PerfectyPush()
     const result = await app.start()
 
-    const dialogInstance = DialogControl.mock.instances[0]
     const settingsInstance = SettingsControl.mock.instances[0]
 
     expect(result).toEqual(true)
-    expect(dialogInstance.draw).toHaveBeenCalledTimes(1)
+    expect(DialogControl.draw).toHaveBeenCalledTimes(1)
     expect(settingsInstance.draw).toHaveBeenCalledTimes(1)
   })
 

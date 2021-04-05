@@ -29,8 +29,7 @@ describe('when the dialog is created', () => {
   it('is drawn and hidden if already subscribed', () => {
     Permission.hasNeverAsked.mockImplementationOnce(() => false)
 
-    const dialog = new DialogControl()
-    dialog.draw()
+    DialogControl.draw()
 
     const expectedHTML = '<div class="site perfecty-push-dialog-container" id="perfecty-push-dialog-container" style="display: none;">  <div class="perfecty-push-dialog-box">    <div class="perfecty-push-dialog-title">Do you want to receive notifications?</div>    <div class="perfecty-push-dialog-buttons">      <button id="perfecty-push-dialog-cancel" type="button" class="button secondary">Not now</button>      <button id="perfecty-push-dialog-subscribe" type="button" class="button primary">Continue</button>     </div>  </div></div>'
     expect(document.body.innerHTML).toEqual(expectedHTML)
@@ -38,8 +37,7 @@ describe('when the dialog is created', () => {
   })
 
   it('is shown to unsubscribed users', () => {
-    const dialog = new DialogControl()
-    dialog.draw()
+    DialogControl.draw()
 
     expect(isShown()).toEqual(true)
   })
@@ -47,15 +45,13 @@ describe('when the dialog is created', () => {
   it('is hidden to unsubscribed users and already asked to subscribe', () => {
     Storage.hasAskedNotifications.mockImplementationOnce(() => true)
 
-    const dialog = new DialogControl()
-    dialog.draw()
+    DialogControl.draw()
 
     expect(isShown()).toEqual(false)
   })
 
   it('hides when cancel is clicked', async () => {
-    const dialog = new DialogControl()
-    dialog.draw()
+    DialogControl.draw()
 
     expect(isShown()).toEqual(true)
     await simulateClickOnCancel()
@@ -64,8 +60,7 @@ describe('when the dialog is created', () => {
   })
 
   it('register user when subscribe is clicked and permission is granted', async () => {
-    const dialog = new DialogControl()
-    dialog.draw()
+    DialogControl.draw()
 
     expect(isShown()).toEqual(true)
     await simulateClickOnSubscribe()
