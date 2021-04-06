@@ -7,6 +7,7 @@ const defaultOptions = {
   dialogCancel: 'Not now',
   settingsTitle: 'Notifications preferences',
   settingsOptIn: 'I want to receive notifications',
+  settingsUpdateError: 'Could not change the preference, try again',
   siteUrl: '',
   serverUrl: '',
   vapidPublicKey: '',
@@ -59,6 +60,7 @@ describe('options', () => {
     expect(value.dialogCancel).toEqual(expected.dialogCancel)
     expect(value.settingsTitle).toEqual(expected.settingsTitle)
     expect(value.settingsOptIn).toEqual(expected.settingsOptIn)
+    expect(value.settingsUpdateError).toEqual(expected.settingsUpdateError)
     expect(value.siteUrl).toEqual(expected.siteUrl)
     expect(value.serverUrl).toEqual(expected.serverUrl)
     expect(value.vapidPublicKey).toEqual(expected.vapidPublicKey)

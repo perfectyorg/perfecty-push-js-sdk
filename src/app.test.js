@@ -2,6 +2,7 @@ import 'regenerator-runtime/runtime'
 import Permission from './lib/push_api/permission'
 import Features from './lib/push_api/features'
 import Registration from './lib/push_api/registration'
+import ServiceInstaller from './lib/push_api/service_installer'
 import DialogControl from './controls/dialog'
 import SettingsControl from './controls/settings'
 import PerfectyPush from './app'
@@ -18,8 +19,9 @@ jest.mock('./lib/push_api/features', () => ({
   isSupported: jest.fn(() => true)
 }))
 jest.mock('./lib/push_api/registration', () => ({
-  assureRegistration: jest.fn(() => Promise.resolve({ uuid: 'mocked-uuid' }))
+  check: jest.fn(() => Promise.resolve({ uuid: 'mocked-uuid' }))
 }))
+jest.mock('./lib/push_api/service_installer')
 jest.mock('./controls/dialog')
 jest.mock('./controls/settings')
 
@@ -27,7 +29,9 @@ describe('when the app is started', () => {
   beforeEach(() => {
     Permission.isGranted.mockClear()
     Features.isSupported.mockClear()
-    Registration.assureRegistration.mockClear()
+    Registration.check.mockClear()
+    ServiceInstaller.removeConflicts.mockClear()
+    ServiceInstaller.installIfMissing.mockClear()
     DialogControl.draw.mockClear()
     SettingsControl.draw.mockClear()
     SettingsControl.setCheckboxActive.mockClear()
@@ -61,22 +65,22 @@ describe('when the app is started', () => {
     expect(SettingsControl.draw).toHaveBeenCalledTimes(1)
   })
 
-  it('register service if permission granted', async () => {
+  it('register and install service if permission granted', async () => {
     const result = await PerfectyPush.start()
 
     expect(result).toEqual(true)
-    expect(Registration.assureRegistration).toHaveBeenCalledTimes(1)
-    expect(SettingsControl.setCheckboxActive).toHaveBeenCalledTimes(1)
+    expect(Registration.check).toHaveBeenCalledTimes(1)
+    expect(ServiceInstaller.installIfMissing).toHaveBeenCalledTimes(1)
   })
 
   it('register service if permission granted but unsuccessful', async () => {
-    Registration.assureRegistration.mockImplementationOnce(() => Promise.resolve(false))
+    Registration.check.mockImplementationOnce(() => Promise.resolve(false))
 
     const result = await PerfectyPush.start()
 
     expect(result).toEqual(true)
     expect(SettingsControl.setActive).toHaveBeenCalledTimes(0)
-    expect(Registration.assureRegistration).toHaveBeenCalledTimes(1)
+    expect(Registration.check).toHaveBeenCalledTimes(1)
   })
 
   it('doesn\'t register service if permission is not granted', async () => {
@@ -85,6 +89,14 @@ describe('when the app is started', () => {
     const result = await PerfectyPush.start()
 
     expect(result).toEqual(true)
-    expect(Registration.assureRegistration).toHaveBeenCalledTimes(0)
+    expect(Registration.check).toHaveBeenCalledTimes(0)
+  })
+
+  it('removes existing service workers that conflict', async () => {
+    Options.unregisterConflicts = true
+    await PerfectyPush.start()
+
+    expect(ServiceInstaller.removeConflicts).toHaveBeenCalledTimes(1)
+    Options.unregisterConflicts = false
   })
 })

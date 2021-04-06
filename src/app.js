@@ -5,6 +5,7 @@ import Registration from './lib/push_api/registration'
 import Permission from './lib/push_api/permission'
 import Features from './lib/push_api/features'
 import Logger from './lib/logger'
+import ServiceInstaller from './lib/push_api/service_installer'
 
 const PerfectyPush = (() => {
   /**
@@ -25,7 +26,14 @@ const PerfectyPush = (() => {
     }
 
     drawHtmlControls()
-    await checkRegistration()
+
+    if (Permission.isGranted()) {
+      Logger.info('The site has permissions granted')
+      await checkInstallation()
+      await checkRegistration()
+    } else {
+      Logger.info('The site has not permissions granted')
+    }
 
     Logger.info('Perfecty Push SDK was started')
     return true
@@ -46,19 +54,19 @@ const PerfectyPush = (() => {
     SettingsControl.draw()
   }
 
+  const checkInstallation = async () => {
+    Logger.info('Checking Service Worker installation')
+
+    if (Options.unregisterConflicts === true) {
+      Logger.info('Removing conflicts')
+      await ServiceInstaller.removeConflicts()
+    }
+    await ServiceInstaller.installIfMissing()
+  }
+
   const checkRegistration = async () => {
     Logger.info('Checking user registration')
-    if (Permission.isGranted()) {
-      Logger.info('The site has permissions granted')
-
-      const response = await Registration.assureRegistration()
-
-      if (response !== false) {
-        await SettingsControl.setCheckboxActive(true)
-      }
-    } else {
-      Logger.info('The site has not permissions granted')
-    }
+    await Registration.check()
   }
 
   return {

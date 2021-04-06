@@ -7,6 +7,7 @@ const Options = (() => {
   let dialogCancelValue = 'Not now'
   let settingsTitleValue = 'Notifications preferences'
   let settingsOptInValue = 'I want to receive notifications'
+  let settingsUpdateError = 'Could not change the preference, try again'
   let siteUrlValue = ''
   let serverUrlValue = ''
   let vapidPublicKeyValue = ''
@@ -27,6 +28,7 @@ const Options = (() => {
     Options.dialogCancel = custom.dialogCancel
     Options.settingsTitle = custom.settingsTitle
     Options.settingsOptIn = custom.settingsOptIn
+    Options.settingsUpdateError = custom.settingsUpdateError
     Options.siteUrl = custom.siteUrl
     Options.serverUrl = custom.serverUrl
     Options.vapidPublicKey = custom.vapidPublicKey
@@ -59,6 +61,8 @@ const Options = (() => {
     set settingsTitle (v) { settingsTitleValue = getValue(v, settingsTitleValue) },
     get settingsOptIn () { return settingsOptInValue },
     set settingsOptIn (v) { settingsOptInValue = getValue(v, settingsOptInValue) },
+    get settingsUpdateError () { return settingsUpdateError },
+    set settingsUpdateError (v) { settingsUpdateError = getValue(v, settingsUpdateError) },
     get siteUrl () { return siteUrlValue },
     set siteUrl (v) { siteUrlValue = getValue(v, siteUrlValue) },
     get serverUrl () { return serverUrlValue },
