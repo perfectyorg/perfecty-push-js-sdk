@@ -7,7 +7,7 @@ const defaultOptions = {
   dialogCancel: 'Not now',
   settingsTitle: 'Notifications preferences',
   settingsOptIn: 'I want to receive notifications',
-  settingsUpdateError: 'Could not change the preference, try again',
+  settingsUpdateError: 'Could not change the preference, please try again',
   siteUrl: '',
   serverUrl: '',
   vapidPublicKey: '',

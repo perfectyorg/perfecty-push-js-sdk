@@ -3,6 +3,7 @@ import Storage from '../lib/push_api/storage'
 import Registration from '../lib/push_api/registration'
 import Logger from '../lib/logger'
 import Options from '../lib/push_api/options'
+import ServiceInstaller from '../lib/push_api/service_installer'
 
 const DialogControl = (() => {
   const draw = () => {
@@ -45,6 +46,7 @@ const DialogControl = (() => {
       if (Permission.isGranted()) {
         Logger.info('User has granted permissions')
 
+        await ServiceInstaller.installIfMissing()
         await Registration.register()
       }
     }

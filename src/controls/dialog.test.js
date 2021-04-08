@@ -3,6 +3,7 @@ import Permission from '../lib/push_api/permission'
 import Storage from '../lib/push_api/storage'
 import Registration from '../lib/push_api/registration'
 import DialogControl from './dialog'
+import ServiceInstaller from '../lib/push_api/service_installer'
 
 jest.mock('../lib/push_api/permission', () => ({
   hasNeverAsked: jest.fn().mockImplementation(() => true),
@@ -14,6 +15,7 @@ jest.mock('../lib/push_api/storage', () => ({
   setHasAskedNotifications: jest.fn(() => true)
 }))
 jest.mock('../lib/push_api/registration')
+jest.mock('../lib/push_api/service_installer')
 
 describe('when the dialog is created', () => {
   beforeEach(() => {
@@ -23,6 +25,7 @@ describe('when the dialog is created', () => {
     Storage.hasAskedNotifications.mockClear()
     Storage.setHasAskedNotifications.mockClear()
     Registration.register.mockClear()
+    ServiceInstaller.installIfMissing.mockClear()
     document.body.innerHTML = ''
   })
 
@@ -59,7 +62,7 @@ describe('when the dialog is created', () => {
     expect(Storage.setHasAskedNotifications).toHaveBeenCalledTimes(1)
   })
 
-  it('register user when subscribe is clicked and permission is granted', async () => {
+  it('register user and install service worker when subscribe is clicked and permission is granted', async () => {
     DialogControl.draw()
 
     expect(isShown()).toEqual(true)
@@ -68,6 +71,7 @@ describe('when the dialog is created', () => {
     expect(Storage.setHasAskedNotifications).toHaveBeenCalledTimes(1)
     expect(Permission.askIfNotDenied).toHaveBeenCalledTimes(1)
     expect(Registration.register).toHaveBeenCalledTimes(1)
+    expect(ServiceInstaller.installIfMissing).toHaveBeenCalledTimes(1)
   })
 })
 

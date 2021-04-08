@@ -28,7 +28,7 @@ const ApiClient = (() => {
     }
   }
 
-  const status = async (userId) => {
+  const getUser = async (userId) => {
     Logger.info('Getting the registration status from the server')
 
     const path = `${Options.serverUrl}/v1/public/users/${userId}`
@@ -37,15 +37,19 @@ const ApiClient = (() => {
       method: 'get',
       headers: getHeaders()
     })
-    const response = await body.json()
-    Logger.debug('response', response)
+    if (body.ok) {
+      const user = await body.json()
+      Logger.debug('response', user)
 
-    if (response && response.success && response.success === true) {
-      Logger.info('The user was found')
-      return response
+      if (user) {
+        Logger.info('The user was found')
+      } else if (user) {
+        Logger.error('The user was not found')
+      }
+      return user
     } else {
-      Logger.error('The user was not found')
-      return false
+      Logger.debug('response', body)
+      throw new Error('Could not communicate with the server')
     }
   }
 
@@ -86,7 +90,7 @@ const ApiClient = (() => {
   return {
     register,
     updatePreferences,
-    status
+    getUser
   }
 })()
 

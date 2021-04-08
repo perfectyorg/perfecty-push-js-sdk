@@ -24,10 +24,14 @@ const Registration = (() => {
 
   const getStatus = async (userId) => {
     Logger.info('Checking the subscription status')
-
     let status = STATUS_NOT_FOUND
-    const response = await ApiClient.status(userId)
-    if (response !== false && response.status === 'active') {
+
+    if (userId === null) {
+      return status
+    }
+
+    const user = await ApiClient.getUser(userId)
+    if (user && user.is_active === true) {
       status = STATUS_ACTIVE
     }
     return status
@@ -41,9 +45,9 @@ const Registration = (() => {
       Logger.info('Sending user registration')
       const response = await ApiClient.register(Storage.userId(), pushSubscription)
       if (response !== false) {
-        Storage.setIsUserActive(response.active)
+        Storage.setIsUserActive(response.is_active)
         Storage.setUserId(response.uuid)
-        SettingsControl.setCheckboxActive(response.active)
+        SettingsControl.setCheckboxActive(response.is_active)
       }
     } else {
       Logger.info('No Push Subscription was found')

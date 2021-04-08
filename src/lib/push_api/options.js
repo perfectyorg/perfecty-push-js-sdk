@@ -7,7 +7,7 @@ const Options = (() => {
   let dialogCancelValue = 'Not now'
   let settingsTitleValue = 'Notifications preferences'
   let settingsOptInValue = 'I want to receive notifications'
-  let settingsUpdateError = 'Could not change the preference, try again'
+  let settingsUpdateError = 'Could not change the preference, please try again'
   let siteUrlValue = ''
   let serverUrlValue = ''
   let vapidPublicKeyValue = ''

@@ -64,6 +64,12 @@ const ServiceInstaller = (() => {
       return null
     }
 
+    const activated = await waitActive(registration)
+    if (!activated) {
+      Logger.error('The service worker was not activated')
+      return null
+    }
+
     const subscription = await registration.pushManager.getSubscription()
     if (subscription !== null) {
       return subscription
@@ -73,6 +79,26 @@ const ServiceInstaller = (() => {
       userVisibleOnly: true,
       applicationServerKey: urlBase64ToUint8Array(Options.vapidPublicKey)
     })
+  }
+
+  const waitActive = (registration) => {
+    const sw = registration.installing ?? registration.waiting ?? registration.active
+    if (!sw) {
+      return Promise.resolve(false)
+    }
+
+    if (sw.state === 'activated') {
+      return Promise.resolve(true)
+    } else {
+      return new Promise((resolve) => {
+        sw.addEventListener('statechange', (e) => {
+          if (e.target.state === 'activated') {
+            Logger.debug('Activation detected on statechange')
+            resolve(true)
+          }
+        })
+      })
+    }
   }
 
   return {

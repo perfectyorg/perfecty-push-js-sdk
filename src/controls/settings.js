@@ -23,7 +23,7 @@ const SettingsControl = (() => {
       Storage.setIsUserActive(isActive)
       showMessage('')
     } else {
-      showMessage('Could not change the preference, please try again')
+      showMessage(Options.settingsUpdateError)
     }
   }
 
@@ -55,10 +55,8 @@ const SettingsControl = (() => {
     document.getElementById('perfecty-push-settings-subscribed').onchange = async (e) => {
       const checked = e.target.checked
 
-      if (Permission.hasNeverAsked()) {
+      if (Permission.hasNeverAsked() || Permission.isDenied()) {
         DialogControl.show()
-      } else if (Permission.isDenied()) {
-        showMessage('You need to allow notifications')
       } else if (Permission.isGranted()) {
         await setActive(checked)
       }
