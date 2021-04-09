@@ -8,7 +8,6 @@ const Options = (() => {
   let settingsTitleValue = 'Notifications preferences'
   let settingsOptInValue = 'I want to receive notifications'
   let settingsUpdateError = 'Could not change the preference, please try again'
-  let siteUrlValue = ''
   let serverUrlValue = ''
   let vapidPublicKeyValue = ''
   let tokenHeaderValue = 'Bearer'
@@ -29,7 +28,6 @@ const Options = (() => {
     Options.settingsTitle = custom.settingsTitle
     Options.settingsOptIn = custom.settingsOptIn
     Options.settingsUpdateError = custom.settingsUpdateError
-    Options.siteUrl = custom.siteUrl
     Options.serverUrl = custom.serverUrl
     Options.vapidPublicKey = custom.vapidPublicKey
     Options.tokenHeader = custom.tokenHeader
@@ -63,8 +61,6 @@ const Options = (() => {
     set settingsOptIn (v) { settingsOptInValue = getValue(v, settingsOptInValue) },
     get settingsUpdateError () { return settingsUpdateError },
     set settingsUpdateError (v) { settingsUpdateError = getValue(v, settingsUpdateError) },
-    get siteUrl () { return siteUrlValue },
-    set siteUrl (v) { siteUrlValue = getValue(v, siteUrlValue) },
     get serverUrl () { return serverUrlValue },
     set serverUrl (v) { serverUrlValue = getValue(v, serverUrlValue) },
     get vapidPublicKey () { return vapidPublicKeyValue },
