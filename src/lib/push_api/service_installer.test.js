@@ -1,18 +1,72 @@
 import 'regenerator-runtime/runtime'
+import Options from './options'
+import ApiClient from './api_client'
+import Storage from './storage'
+import Navigator from './navigator'
+import ServiceInstaller from './service_installer'
 
-let navigatorSpy
+jest.mock('./api_client', () => ({
+  getUser: jest.fn(() => Promise.resolve({ is_active: true, user_id: 'user-uuid' }))
+}))
+jest.mock('./storage')
+jest.mock('./navigator')
 
-let ServiceInstaller
+let unregisterConflictsSpy
 
 beforeEach(() => {
-  navigatorSpy = jest.spyOn(global, 'navigator', 'get')
-  jest.resetModules()
-})
-afterEach(() => {
-  navigatorSpy.mockRestore()
+  ApiClient.getUser.mockClear()
+  Navigator.serviceWorker.mockClear()
+  unregisterConflictsSpy = jest.spyOn(Options, 'unregisterConflicts', 'get')
+  unregisterConflictsSpy.mockImplementation(() => false)
 })
 
-describe('when removing conflicts', () => {
+describe('when removing installations', () => {
+  it('is unregistered for old user subscriptions', async () => {
+    const mockUnregister = jest.fn().mockReturnValue(Promise.resolve(true))
+    const serviceWorkerRegistration = {
+      active: {
+        scriptURL: 'http://mytest.com'
+      },
+      unregister: mockUnregister
+    }
+    const mockGetRegistration = jest.fn().mockReturnValueOnce(Promise.resolve(serviceWorkerRegistration))
+    Navigator.serviceWorker.mockImplementationOnce(() => ({
+      getRegistration: mockGetRegistration
+    }))
+    Storage.userId.mockImplementationOnce(() => 'existing-user-uuid')
+    ApiClient.getUser.mockImplementationOnce(() => Promise.resolve(null))
+
+    await ServiceInstaller.removeOldSubscription()
+
+    expect(mockGetRegistration).toHaveBeenCalledTimes(1)
+    expect(mockUnregister).toHaveBeenCalledTimes(1)
+  })
+
+  it('throws exception in old subscriptions error', async () => {
+    Storage.userId.mockImplementationOnce(() => 'existing-user-uuid')
+    ApiClient.getUser.mockImplementationOnce(() => { throw new Error('Error!') })
+
+    const t = async () => {
+      await ServiceInstaller.removeOldSubscription()
+    }
+
+    await expect(t).rejects.toThrow(new Error('Error!'))
+  })
+
+  it('is not unregistered for valid user subscriptions', async () => {
+    const mockGetRegistration = jest.fn()
+    Navigator.serviceWorker.mockImplementationOnce(() => ({
+      getRegistration: mockGetRegistration
+    }))
+
+    Storage.setUserId('user-uuid')
+    await ServiceInstaller.removeOldSubscription()
+    Storage.setUserId(null)
+
+    expect(mockGetRegistration).toHaveBeenCalledTimes(0)
+    Navigator.serviceWorker.mockReset()
+  })
+
   it('is unregistered on conflicts', async () => {
     const mockUnregister = jest.fn().mockReturnValue(Promise.resolve(true))
     const serviceWorkerRegistration = {
@@ -21,17 +75,35 @@ describe('when removing conflicts', () => {
       },
       unregister: mockUnregister
     }
-    const mockGetRegistration = jest.fn().mockReturnValue(Promise.resolve(serviceWorkerRegistration))
-    navigatorSpy.mockImplementationOnce(() => ({
-      serviceWorker: {
-        getRegistration: mockGetRegistration
-      }
+    const mockGetRegistrations = jest.fn().mockReturnValueOnce(Promise.resolve([serviceWorkerRegistration]))
+    Navigator.serviceWorker.mockImplementationOnce(() => ({
+      getRegistrations: mockGetRegistrations
     }))
-    ServiceInstaller = require('./service_installer').default
+    unregisterConflictsSpy.mockImplementationOnce(() => true)
 
     await ServiceInstaller.removeConflicts()
 
-    expect(mockGetRegistration).toHaveBeenCalledTimes(2)
+    expect(mockGetRegistrations).toHaveBeenCalledTimes(1)
+    expect(mockUnregister).toHaveBeenCalledTimes(1)
+  })
+
+  it('is unregistered on old scope installations', async () => {
+    const mockUnregister = jest.fn().mockReturnValue(Promise.resolve(true))
+    const serviceWorkerRegistration = {
+      active: {
+        scriptURL: 'http://mytest.com/perfecty/'
+      },
+      scope: 'http://localhost/perfecty/push/old/scope',
+      unregister: mockUnregister
+    }
+    const mockGetRegistrations = jest.fn().mockReturnValue(Promise.resolve([serviceWorkerRegistration]))
+    Navigator.serviceWorker.mockImplementationOnce(() => ({
+      getRegistrations: mockGetRegistrations
+    }))
+
+    await ServiceInstaller.removeConflicts()
+
+    expect(mockGetRegistrations).toHaveBeenCalledTimes(1)
     expect(mockUnregister).toHaveBeenCalledTimes(1)
   })
 
@@ -41,19 +113,17 @@ describe('when removing conflicts', () => {
       active: {
         scriptURL: 'http://mytest.com/perfecty/'
       },
+      scope: 'http://localhost/perfecty/push',
       unregister: mockUnregister
     }
-    const mockGetRegistration = jest.fn().mockReturnValue(Promise.resolve(serviceWorkerRegistration))
-    navigatorSpy.mockImplementationOnce(() => ({
-      serviceWorker: {
-        getRegistration: mockGetRegistration
-      }
+    const mockGetRegistrations = jest.fn().mockReturnValue(Promise.resolve([serviceWorkerRegistration]))
+    Navigator.serviceWorker.mockImplementationOnce(() => ({
+      getRegistrations: mockGetRegistrations
     }))
-    ServiceInstaller = require('./service_installer').default
 
     await ServiceInstaller.removeConflicts()
 
-    expect(mockGetRegistration).toHaveBeenCalledTimes(1)
+    expect(mockGetRegistrations).toHaveBeenCalledTimes(1)
     expect(mockUnregister).toHaveBeenCalledTimes(0)
   })
 })
@@ -69,13 +139,10 @@ describe('when installing', () => {
     const mockGetRegistration = jest.fn()
       .mockReturnValueOnce(Promise.resolve({ active: null }))
       .mockReturnValueOnce(Promise.resolve(serviceWorkerRegistration))
-    navigatorSpy.mockImplementationOnce(() => ({
-      serviceWorker: {
-        register: mockRegister,
-        getRegistration: mockGetRegistration
-      }
+    Navigator.serviceWorker.mockImplementation(() => ({
+      register: mockRegister,
+      getRegistration: mockGetRegistration
     }))
-    ServiceInstaller = require('./service_installer').default
 
     const result = await ServiceInstaller.installIfMissing()
 
@@ -91,85 +158,67 @@ describe('when installing', () => {
     }
     const mockRegister = jest.fn().mockReturnValue(Promise.resolve())
     const mockGetRegistration = jest.fn().mockReturnValueOnce(Promise.resolve(serviceWorkerRegistration))
-    navigatorSpy.mockImplementationOnce(() => ({
-      serviceWorker: {
-        register: mockRegister,
-        getRegistration: mockGetRegistration
-      }
+    Navigator.serviceWorker.mockImplementationOnce(() => ({
+      register: mockRegister,
+      getRegistration: mockGetRegistration
     }))
-    ServiceInstaller = require('./service_installer').default
 
     const result = await ServiceInstaller.installIfMissing()
 
     expect(result).toEqual(false)
     expect(mockRegister).toHaveBeenCalledTimes(0)
+    Navigator.serviceWorker.mockReset()
   })
 })
 
 describe('when getting the installation type', () => {
   it('detects if there\'s no installation', async () => {
-    const mockUnregister = jest.fn().mockReturnValue(Promise.resolve(true))
     const serviceWorkerRegistration = {
       active: {
         scriptURL: ''
-      },
-      unregister: mockUnregister
-    }
-    const mockGetRegistration = jest.fn().mockReturnValue(Promise.resolve(serviceWorkerRegistration))
-    navigatorSpy.mockImplementation(() => ({
-      serviceWorker: {
-        getRegistration: mockGetRegistration
       }
-    }))
-    ServiceInstaller = require('./service_installer').default
+    }
 
-    const result = await ServiceInstaller.getInstallationType()
+    const result = await ServiceInstaller.getInstallationType(serviceWorkerRegistration)
 
     expect(result).toEqual(ServiceInstaller.TYPE_NOTHING)
-    expect(mockGetRegistration).toHaveBeenCalledTimes(1)
   })
 
   it('detects if perfecty is installed', async () => {
-    const mockUnregister = jest.fn().mockReturnValue(Promise.resolve(true))
     const serviceWorkerRegistration = {
       active: {
         scriptURL: 'http://mytest.com/perfecty-push-sdk.js'
       },
-      unregister: mockUnregister
+      scope: 'http://localhost/perfecty/push'
     }
-    const mockGetRegistration = jest.fn().mockReturnValue(Promise.resolve(serviceWorkerRegistration))
-    navigatorSpy.mockImplementation(() => ({
-      serviceWorker: {
-        getRegistration: mockGetRegistration
-      }
-    }))
-    ServiceInstaller = require('./service_installer').default
 
-    const result = await ServiceInstaller.getInstallationType()
+    const result = await ServiceInstaller.getInstallationType(serviceWorkerRegistration)
 
     expect(result).toEqual(ServiceInstaller.TYPE_PERFECTY)
-    expect(mockGetRegistration).toHaveBeenCalledTimes(1)
+  })
+
+  it('detects if perfecty is installed with an old scope', async () => {
+    const serviceWorkerRegistration = {
+      active: {
+        scriptURL: 'http://mytest.com/perfecty-push-sdk.js'
+      },
+      scope: 'http://localhost/perfecty/push/old/scope'
+    }
+
+    const result = await ServiceInstaller.getInstallationType(serviceWorkerRegistration)
+
+    expect(result).toEqual(ServiceInstaller.TYPE_OLD_SCOPE)
   })
 
   it('detects if a conflicting worker is installed', async () => {
-    const mockUnregister = jest.fn().mockReturnValue(Promise.resolve(true))
     const serviceWorkerRegistration = {
       active: {
         scriptURL: 'http://mytest.com/any-other-push-service-sdk.js'
-      },
-      unregister: mockUnregister
-    }
-    const mockGetRegistration = jest.fn().mockReturnValue(Promise.resolve(serviceWorkerRegistration))
-    navigatorSpy.mockImplementation(() => ({
-      serviceWorker: {
-        getRegistration: mockGetRegistration
       }
-    }))
-    ServiceInstaller = require('./service_installer').default
+    }
 
-    const result = await ServiceInstaller.getInstallationType()
+    const result = await ServiceInstaller.getInstallationType(serviceWorkerRegistration)
 
     expect(result).toEqual(ServiceInstaller.TYPE_CONFLICT)
-    expect(mockGetRegistration).toHaveBeenCalledTimes(1)
   })
 })

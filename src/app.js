@@ -57,15 +57,14 @@ const PerfectyPush = (() => {
   const checkInstallation = async () => {
     Logger.info('Checking Service Worker installation')
 
-    if (Options.unregisterConflicts === true) {
-      Logger.info('Removing conflicts')
-      await ServiceInstaller.removeConflicts()
-    }
+    await ServiceInstaller.removeOldSubscription()
+    await ServiceInstaller.removeConflicts()
     await ServiceInstaller.installIfMissing()
   }
 
   const checkRegistration = async () => {
-    Logger.info('Checking user registration')
+    Logger.info('Checking registration')
+
     await Registration.check()
   }
 

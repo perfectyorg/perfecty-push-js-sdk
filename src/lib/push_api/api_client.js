@@ -8,7 +8,7 @@ const ApiClient = (() => {
     const path = `${Options.serverUrl}/v1/public/users`
     const bodyContent = JSON.stringify({
       user: pushSubscription,
-      userId: userId
+      user_id: userId
     })
 
     const body = await fetch(path, {
@@ -41,12 +41,13 @@ const ApiClient = (() => {
       const user = await body.json()
       Logger.debug('response', user)
 
-      if (user) {
+      if (user && typeof user.uuid !== 'undefined') {
         Logger.info('The user was found')
-      } else if (user) {
-        Logger.error('The user was not found')
+        return user
+      } else {
+        Logger.info('The user was not found')
+        return null
       }
-      return user
     } else {
       Logger.debug('response', body)
       throw new Error('Could not communicate with the server')

@@ -91,12 +91,4 @@ describe('when the app is started', () => {
     expect(result).toEqual(true)
     expect(Registration.check).toHaveBeenCalledTimes(0)
   })
-
-  it('removes existing service workers that conflict', async () => {
-    Options.unregisterConflicts = true
-    await PerfectyPush.start()
-
-    expect(ServiceInstaller.removeConflicts).toHaveBeenCalledTimes(1)
-    Options.unregisterConflicts = false
-  })
 })

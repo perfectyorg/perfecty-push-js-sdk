@@ -8,45 +8,27 @@ import SettingsControl from '../../controls/settings'
  * Handle the User Registration
  */
 const Registration = (() => {
-  const STATUS_NOT_FOUND = 0
-  const STATUS_ACTIVE = 1
-
   const check = async () => {
     Logger.info('Checking user registration')
-    const status = await getStatus(Storage.userId())
-    if (status === STATUS_NOT_FOUND) {
-      Logger.info('User was not found in the server, registering')
+    if (Storage.userId() === null || Storage.shouldRegisterUser()) {
+      Logger.info('User was not found, registering')
       await register()
     } else {
       Logger.info('User is already registered')
     }
   }
 
-  const getStatus = async (userId) => {
-    Logger.info('Checking the subscription status')
-    let status = STATUS_NOT_FOUND
-
-    if (userId === null) {
-      return status
-    }
-
-    const user = await ApiClient.getUser(userId)
-    if (user && user.is_active === true) {
-      status = STATUS_ACTIVE
-    }
-    return status
-  }
-
   const register = async () => {
     Logger.info('Registering user')
 
-    const pushSubscription = await ServiceInstaller.getPushSubscription()
+    const pushSubscription = await ServiceInstaller.subscribeToPush()
     if (pushSubscription !== null) {
       Logger.info('Sending user registration')
       const response = await ApiClient.register(Storage.userId(), pushSubscription)
       if (response !== false) {
         Storage.setIsUserActive(response.is_active)
         Storage.setUserId(response.uuid)
+        Storage.setShouldRegisterUser(false)
         SettingsControl.setCheckboxActive(response.is_active)
       }
     } else {

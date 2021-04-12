@@ -6,45 +6,45 @@ import Storage from './storage'
 import SettingsControl from '../../controls/settings'
 
 jest.mock('./service_installer', () => ({
-  getPushSubscription: jest.fn(() => ({ mocked: 'test' }))
+  subscribeToPush: jest.fn(() => ({ mocked: 'test' }))
 }))
 jest.mock('./api_client', () => ({
-  register: jest.fn(() => Promise.resolve({ uuid: 'mocked-uuid', is_active: true })),
-  getUser: jest.fn(() => Promise.resolve({ is_active: true }))
+  register: jest.fn(() => Promise.resolve({ uuid: 'mocked-uuid', is_active: true, disabled: false })),
+  getUser: jest.fn(() => Promise.resolve({ is_active: true, disabled: false }))
 }))
 jest.mock('../../controls/settings')
 jest.mock('./storage')
 
 beforeEach(() => {
-  ServiceInstaller.getPushSubscription.mockClear()
+  ServiceInstaller.subscribeToPush.mockClear()
   ApiClient.register.mockClear()
   ApiClient.getUser.mockClear()
   Storage.setUserId.mockClear()
   Storage.setIsUserActive.mockClear()
+  Storage.userId.mockClear()
+  Storage.shouldRegisterUser.mockClear()
   SettingsControl.setCheckboxActive.mockClear()
 })
 
 describe('when checking the registration', () => {
   it('skips the registration if the user is found', async () => {
+    Storage.userId.mockImplementationOnce(() => 'existing-uuid')
     await Registration.check()
-    expect(ServiceInstaller.getPushSubscription).toHaveBeenCalledTimes(0)
+    expect(ServiceInstaller.subscribeToPush).toHaveBeenCalledTimes(0)
     expect(ApiClient.register).toHaveBeenCalledTimes(0)
   })
-  it('register the user if it is not found', async () => {
-    ApiClient.getUser.mockImplementationOnce(() => Promise.resolve(null))
+  it('register the user if it is not found (null)', async () => {
+    Storage.userId.mockImplementationOnce(() => null)
     await Registration.check()
-    expect(ServiceInstaller.getPushSubscription).toHaveBeenCalledTimes(1)
+    expect(ServiceInstaller.subscribeToPush).toHaveBeenCalledTimes(1)
     expect(ApiClient.register).toHaveBeenCalledTimes(1)
   })
-  it('throws exception on unexpected error', async () => {
-    ApiClient.getUser.mockImplementationOnce(() => { throw new Error('Error!') })
-    const t = async () => {
-      await Registration.check()
-    }
-
-    await expect(t).rejects.toThrow(new Error('Error!'))
-    expect(ServiceInstaller.getPushSubscription).toHaveBeenCalledTimes(0)
-    expect(ApiClient.register).toHaveBeenCalledTimes(0)
+  it('register the user if it is not found (shouldRegisterUser)', async () => {
+    Storage.userId.mockImplementationOnce(() => 'existing-uuid')
+    Storage.shouldRegisterUser.mockImplementationOnce(() => true)
+    await Registration.check()
+    expect(ServiceInstaller.subscribeToPush).toHaveBeenCalledTimes(1)
+    expect(ApiClient.register).toHaveBeenCalledTimes(1)
   })
 })
 
@@ -52,7 +52,7 @@ describe('when registering the user', () => {
   it('calls the api and checks the opt in checkbox', async () => {
     await Registration.register()
 
-    expect(ServiceInstaller.getPushSubscription).toHaveBeenCalledTimes(1)
+    expect(ServiceInstaller.subscribeToPush).toHaveBeenCalledTimes(1)
     expect(ApiClient.register).toHaveBeenCalledTimes(1)
     expect(Storage.setIsUserActive).toHaveBeenNthCalledWith(1, true)
     expect(Storage.setUserId).toHaveBeenNthCalledWith(1, 'mocked-uuid')
@@ -62,12 +62,12 @@ describe('when registering the user', () => {
     ApiClient.register.mockImplementationOnce(() => Promise.resolve(false))
     await Registration.register()
 
-    expect(ServiceInstaller.getPushSubscription).toHaveBeenCalledTimes(1)
+    expect(ServiceInstaller.subscribeToPush).toHaveBeenCalledTimes(1)
     expect(ApiClient.register).toHaveBeenCalledTimes(1)
     expect(Storage.setIsUserActive).toHaveBeenCalledTimes(0)
   })
   it('doesn\'t call the api if there\'s no push subscription', async () => {
-    ServiceInstaller.getPushSubscription.mockImplementationOnce(() => null)
+    ServiceInstaller.subscribeToPush.mockImplementationOnce(() => null)
     await Registration.register()
 
     expect(ApiClient.register).toHaveBeenCalledTimes(0)
