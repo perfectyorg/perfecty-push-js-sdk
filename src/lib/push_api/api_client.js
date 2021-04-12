@@ -19,7 +19,7 @@ const ApiClient = (() => {
     const response = await body.json()
     Logger.debug('response', response)
 
-    if (response && response.success && response.success === true) {
+    if (response && typeof response.uuid !== 'undefined') {
       Logger.info('The user was registered successfully')
       return response
     } else {
@@ -71,7 +71,7 @@ const ApiClient = (() => {
     const response = await body.json()
     Logger.debug('response', response)
 
-    if (response && response.success && response.success === true) {
+    if (response && typeof response.is_active !== 'undefined') {
       Logger.info('The user preferences were changed')
       return true
     } else {
