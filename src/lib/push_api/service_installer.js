@@ -18,7 +18,9 @@ const ServiceInstaller = (() => {
       if (user === null) {
         Logger.info('Removing old subscription')
         const registration = await getPerfectyRegistration()
-        await registration.unregister()
+        if (typeof registration !== 'undefined') {
+          await registration.unregister()
+        }
         Storage.setUserId(null)
       }
     }
