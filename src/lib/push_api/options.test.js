@@ -16,7 +16,8 @@ const defaultOptions = {
   unregisterConflicts: false,
   serviceWorkerScope: '/perfecty/push',
   loggerLevel: Logger.ERROR,
-  loggerVerbose: false
+  loggerVerbose: false,
+  hideBellAfterSubscribe: false
 }
 
 describe('options', () => {
@@ -69,6 +70,7 @@ describe('options', () => {
     expect(value.serviceWorkerScope).toEqual(expected.serviceWorkerScope)
     expect(value.loggerLevel).toEqual(expected.loggerLevel)
     expect(value.loggerVerbose).toEqual(expected.loggerVerbose)
+    expect(value.hideBellAfterSubscribe).toEqual(expected.hideBellAfterSubscribe)
     return true
   }
 })

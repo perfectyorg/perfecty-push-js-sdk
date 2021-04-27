@@ -3,6 +3,7 @@ import Storage from '../lib/push_api/storage'
 import ApiClient from '../lib/push_api/api_client'
 import DialogControl from './dialog'
 import Options from '../lib/push_api/options'
+import Logger from '../lib/logger'
 
 const SettingsControl = (() => {
   const draw = () => {
@@ -29,12 +30,12 @@ const SettingsControl = (() => {
 
   const insertHTML = () => {
     const svg = 'data:image/svg+xml;base64,PHN2ZyBhcmlhLWhpZGRlbj0idHJ1ZSIgZm9jdXNhYmxlPSJmYWxzZSIgZGF0YS1wcmVmaXg9ImZhcyIgZGF0YS1pY29uPSJiZWxsIiBjbGFzcz0ic3ZnLWlubGluZS0tZmEgZmEtYmVsbCBmYS13LTE0IiByb2xlPSJpbWciIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iMCAwIDQ0OCA1MTIiPjxwYXRoIGZpbGw9ImN1cnJlbnRDb2xvciIgZD0iTTIyNCA1MTJjMzUuMzIgMCA2My45Ny0yOC42NSA2My45Ny02NEgxNjAuMDNjMCAzNS4zNSAyOC42NSA2NCA2My45NyA2NHptMjE1LjM5LTE0OS43MWMtMTkuMzItMjAuNzYtNTUuNDctNTEuOTktNTUuNDctMTU0LjI5IDAtNzcuNy01NC40OC0xMzkuOS0xMjcuOTQtMTU1LjE2VjMyYzAtMTcuNjctMTQuMzItMzItMzEuOTgtMzJzLTMxLjk4IDE0LjMzLTMxLjk4IDMydjIwLjg0QzExOC41NiA2OC4xIDY0LjA4IDEzMC4zIDY0LjA4IDIwOGMwIDEwMi4zLTM2LjE1IDEzMy41My01NS40NyAxNTQuMjktNiA2LjQ1LTguNjYgMTQuMTYtOC42MSAyMS43MS4xMSAxNi40IDEyLjk4IDMyIDMyLjEgMzJoMzgzLjhjMTkuMTIgMCAzMi0xNS42IDMyLjEtMzIgLjA1LTcuNTUtMi42MS0xNS4yNy04LjYxLTIxLjcxeiI+PC9wYXRoPjwvc3ZnPg=='
-    const isSubscribed = Storage.isUserActive() ? 'checked="checked"' : ''
+    const subscribedBoxChecked = Storage.isUserActive() ? 'checked="checked"' : ''
     const html =
         '<div class="perfecty-push-settings-container">' +
         '  <div id="perfecty-push-settings-form">' +
         '    <div>' + Options.settingsTitle + '</div>' +
-        '    <input type="checkbox" id="perfecty-push-settings-subscribed" ' + isSubscribed + '/>' +
+        '    <input type="checkbox" id="perfecty-push-settings-subscribed" ' + subscribedBoxChecked + '/>' +
         '    <label for="perfecty-push-settings-subscribed">' + Options.settingsOptIn + '</label>' +
         '    <div id="perfecty-push-settings-notification"></div>' +
         '  </div>' +
@@ -43,7 +44,10 @@ const SettingsControl = (() => {
         '  </div>' +
         '</div>'
     document.body.insertAdjacentHTML('beforeend', html)
-    toggleForm()
+    if (Options.hideBellAfterSubscribe === false || Storage.isUserActive() === false) {
+      showContainer()
+      toggleForm()
+    }
   }
 
   const subscribeToEvents = () => {
@@ -73,6 +77,18 @@ const SettingsControl = (() => {
     }
   }
 
+  const showContainer = () => {
+    const container = document.getElementsByClassName('perfecty-push-settings-container')[0]
+    container.style.display = 'block'
+    Logger.info('Showing the bell and settings controls')
+  }
+
+  const hideContainer = () => {
+    const container = document.getElementsByClassName('perfecty-push-settings-container')[0]
+    container.style.display = 'none'
+    Logger.info('Hiding the bell and settings controls')
+  }
+
   const listenToOutsideClick = (formControl) => {
     // jquery: https://github.com/jquery/jquery/blob/master/src/css/hiddenVisibleSelectors.js
     const isVisible = elem => !!elem && !!(elem.offsetWidth || elem.offsetHeight || elem.getClientRects().length)
@@ -95,10 +111,18 @@ const SettingsControl = (() => {
     notificationControl.textContent = message
   }
 
+  const userHasSubscribed = (isActive) => {
+    setCheckboxActive(isActive)
+    if (Options.hideBellAfterSubscribe === true && isActive === true) {
+      hideContainer()
+    }
+  }
+
   return {
     draw,
     setCheckboxActive,
-    setActive
+    setActive,
+    userHasSubscribed
   }
 })()
 

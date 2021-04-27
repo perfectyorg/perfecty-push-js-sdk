@@ -29,7 +29,7 @@ const Registration = (() => {
         Storage.setIsUserActive(response.is_active)
         Storage.setUserId(response.uuid)
         Storage.setShouldRegisterUser(false)
-        SettingsControl.setCheckboxActive(response.is_active)
+        SettingsControl.userHasSubscribed(response.is_active)
       }
     } else {
       Logger.info('No Push Subscription was found')

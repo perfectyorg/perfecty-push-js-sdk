@@ -23,7 +23,7 @@ beforeEach(() => {
   Storage.setIsUserActive.mockClear()
   Storage.userId.mockClear()
   Storage.shouldRegisterUser.mockClear()
-  SettingsControl.setCheckboxActive.mockClear()
+  SettingsControl.userHasSubscribed.mockClear()
 })
 
 describe('when checking the registration', () => {
@@ -56,7 +56,7 @@ describe('when registering the user', () => {
     expect(ApiClient.register).toHaveBeenCalledTimes(1)
     expect(Storage.setIsUserActive).toHaveBeenNthCalledWith(1, true)
     expect(Storage.setUserId).toHaveBeenNthCalledWith(1, 'mocked-uuid')
-    expect(SettingsControl.setCheckboxActive).toHaveBeenNthCalledWith(1, true)
+    expect(SettingsControl.userHasSubscribed).toHaveBeenNthCalledWith(1, true)
   })
   it('calls the api but doesn\'t set the storage values if result = false', async () => {
     ApiClient.register.mockImplementationOnce(() => Promise.resolve(false))

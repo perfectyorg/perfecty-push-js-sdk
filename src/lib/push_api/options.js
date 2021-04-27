@@ -17,6 +17,7 @@ const Options = (() => {
   let serviceWorkerScope = '/perfecty/push'
   let loggerLevel = Logger.ERROR
   let loggerVerbose = false
+  let hideBellAfterSubscribe = false
 
   const init = (custom) => {
     custom = typeof custom === 'undefined' ? {} : custom
@@ -37,6 +38,7 @@ const Options = (() => {
     Options.serviceWorkerScope = custom.serviceWorkerScope
     Options.loggerLevel = custom.loggerLevel
     Options.loggerVerbose = custom.loggerVerbose
+    Options.hideBellAfterSubscribe = custom.hideBellAfterSubscribe
   }
 
   function getValue (customValue, defaultValue) {
@@ -87,7 +89,9 @@ const Options = (() => {
       }
     },
     get loggerVerbose () { return loggerVerbose },
-    set loggerVerbose (v) { loggerVerbose = getValue(v, loggerVerbose) }
+    set loggerVerbose (v) { loggerVerbose = getValue(v, loggerVerbose) },
+    get hideBellAfterSubscribe () { return hideBellAfterSubscribe },
+    set hideBellAfterSubscribe (v) { hideBellAfterSubscribe = getValue(v, hideBellAfterSubscribe) }
   }
 })()
 
