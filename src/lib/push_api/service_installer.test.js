@@ -154,7 +154,8 @@ describe('when installing', () => {
 
   it('doesn\'t perform the registration when already installed', async () => {
     const serviceWorkerRegistration = {
-      active: { scriptURL: 'http://mytest.com/perfecty-push-sdk.js' }
+      active: { scriptURL: 'http://mytest.com/perfecty-push-sdk.js' },
+      scope: 'http://localhost/perfecty/push'
     }
     const mockRegister = jest.fn().mockReturnValue(Promise.resolve())
     const mockGetRegistration = jest.fn().mockReturnValueOnce(Promise.resolve(serviceWorkerRegistration))

@@ -49,12 +49,13 @@ const ServiceInstaller = (() => {
   const installIfMissing = async () => {
     const perfectyRegistration = await getPerfectyRegistration()
     const installedType = await getInstallationType(perfectyRegistration)
-    if (installedType === TYPE_NOTHING) {
-      Logger.info('The Service Worker was not found, installing')
+    if (installedType !== TYPE_PERFECTY) {
+      Logger.info('The Service Worker was not found (type: ' + installedType + '), installing')
       return await install()
+    } else {
+      Logger.info('Service Worker found')
+      return false
     }
-    Logger.info('Service Worker found')
-    return false
   }
 
   const install = async () => {
