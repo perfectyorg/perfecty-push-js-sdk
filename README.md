@@ -56,6 +56,8 @@ npm test
 
 This project is licensed under [MIT](LICENSE).
 
+The bell icon SVG code is a Font Awesome icon under MIT License.
+
 ## Collaborators 🔥
 
 [<img alt="rwngallego" src="https://avatars3.githubusercontent.com/u/691521?s=460&u=ceab22655f55101b66f8e79ed08007e2f8034f34&v=4" width="117">](https://github.com/rwngallego) |
