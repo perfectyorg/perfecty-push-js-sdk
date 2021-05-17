@@ -63,13 +63,18 @@ const ApiClient = (() => {
       is_active: isActive
     })
 
-    const body = await fetch(path, {
-      method: 'post',
-      headers: getHeaders(),
-      body: bodyContent
-    })
-    const response = await body.json()
-    Logger.debug('response', response)
+    let response
+    try {
+      const body = await fetch(path, {
+        method: 'post',
+        headers: getHeaders(),
+        body: bodyContent
+      })
+      response = await body.json()
+      Logger.debug('response', response)
+    } catch (e) {
+      Logger.error('Could not execute the fetch operation', e)
+    }
 
     if (response && typeof response.is_active !== 'undefined') {
       Logger.info('The user preferences were changed')

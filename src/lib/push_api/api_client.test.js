@@ -55,4 +55,14 @@ describe('when updating the preferences', () => {
     const result = await ApiClient.updatePreferences(pushSubscription)
     expect(result).toEqual(false)
   })
+
+  it('returns false on exception', async () => {
+    fetch.mockImplementationOnce(() => {
+      return Promise.resolve({
+        json: () => { throw new Error('Sample exception') }
+      })
+    })
+    const result = await ApiClient.updatePreferences(pushSubscription)
+    expect(result).toEqual(false)
+  })
 })
