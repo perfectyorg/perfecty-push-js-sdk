@@ -1,15 +1,15 @@
 # Perfecty Push JS SDK
 
-[![tests](https://github.com/rwngallego/perfecty-push-js-sdk/workflows/Tests/badge.svg)](https://github.com/rwngallego/perfecty-push-js-sdk/actions?query=workflow%3ATests)
-[![deployment](https://github.com/rwngallego/perfecty-push-js-sdk/workflows/Deployment/badge.svg)](https://github.com/rwngallego/perfecty-push-js-sdk/actions?query=workflow%3ADeployment)
+[![tests](https://github.com/perfectyorg/perfecty-push-js-sdk/workflows/Tests/badge.svg)](https://github.com/perfectyorg/perfecty-push-js-sdk/actions?query=workflow%3ATests)
+[![deployment](https://github.com/perfectyorg/perfecty-push-js-sdk/workflows/Deployment/badge.svg)](https://github.com/perfectyorg/perfecty-push-js-sdk/actions?query=workflow%3ADeployment)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
 
-Javascript SDK for [Perfecty Push](https://github.com/rwngallego/perfecty-push), a self-hosted Push Notifications server written in Go.
+Javascript SDK for [Perfecty Push](https://github.com/perfectyorg/perfecty-push), a self-hosted Push Notifications server written in Go.
 
 You can use this client library to include Push Notifications in your website for free.
 WordPress is also supported. More information on the main project:
 
-- [https://github.com/rwngallego/perfecty-push](https://github.com/rwngallego/perfecty-push)
+- [https://github.com/perfectyorg/perfecty-push](https://github.com/perfectyorg/perfecty-push)
 
 **NOTICE: This project is under active development and no API is stable yet.**
 
@@ -66,6 +66,6 @@ The bell icon SVG code is a Font Awesome icon under MIT License.
 
 ## Special Thanks
 
-[<img alt="Jetbrains" src="https://github.com/rwngallego/perfecty-push-wp/raw/master/.github/assets/jetbrains-logo.svg" width="120">](https://www.jetbrains.com/?from=PerfectyPush)
+[<img alt="Jetbrains" src="https://github.com/perfectyorg/perfecty-push-wp/raw/master/.github/assets/jetbrains-logo.svg" width="120">](https://www.jetbrains.com/?from=PerfectyPush)
 
 Thanks to Jetbrains for supporting this Open Source project with their magnificent tools.
