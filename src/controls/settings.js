@@ -1,9 +1,9 @@
 import Permission from '../lib/push_api/permission'
 import Storage from '../lib/push_api/storage'
-import ApiClient from '../lib/push_api/api_client'
 import DialogControl from './dialog'
 import Options from '../lib/push_api/options'
 import Logger from '../lib/logger'
+import Registration from '../lib/push_api/registration'
 
 const SettingsControl = (() => {
   const draw = () => {
@@ -11,20 +11,26 @@ const SettingsControl = (() => {
     subscribeToEvents()
   }
 
-  const setCheckboxActive = (isActive) => {
+  const setCheckboxOptIn = (optedIn) => {
     const subscribedControl = document.getElementById('perfecty-push-settings-subscribed')
-    subscribedControl.checked = isActive
+    subscribedControl.checked = optedIn
   }
 
-  const setActive = async (isActive) => {
+  const changeOptIn = async (optedIn) => {
     const userId = Storage.userId()
-    const success = await ApiClient.updatePreferences(userId, isActive)
-    if (success === true) {
-      setCheckboxActive(isActive)
-      Storage.setIsUserActive(isActive)
-      showMessage('')
+    let result
+    if (optedIn) {
+      result = await Registration.register(userId)
     } else {
+      result = await Registration.unregister(userId)
+    }
+
+    console.log(result)
+    if (result === false) {
       showMessage(Options.settingsUpdateError)
+    } else {
+      setCheckboxOptIn(optedIn)
+      showMessage('')
     }
   }
 
@@ -63,7 +69,7 @@ const SettingsControl = (() => {
       const checked = e.target.checked
 
       if (Permission.isGranted()) {
-        await setActive(checked)
+        await changeOptIn(checked)
       }
     }
   }
@@ -112,18 +118,18 @@ const SettingsControl = (() => {
     notificationControl.textContent = message
   }
 
-  const userHasSubscribed = (isActive) => {
-    setCheckboxActive(isActive)
-    if (Options.hideBellAfterSubscribe === true && isActive === true) {
+  const userSubscribed = () => {
+    setCheckboxOptIn(true)
+    if (Options.hideBellAfterSubscribe === true) {
       hideContainer()
     }
   }
 
   return {
     draw,
-    setCheckboxActive,
-    setActive,
-    userHasSubscribed
+    setCheckboxOptIn,
+    changeOptIn,
+    userSubscribed
   }
 })()
 

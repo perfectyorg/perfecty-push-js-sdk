@@ -54,21 +54,17 @@ const ApiClient = (() => {
     }
   }
 
-  const updatePreferences = async (userId, isActive) => {
-    Logger.info('Updating user preferences')
-    Logger.debug(`User: ${userId}, isActive: ${isActive}`)
+  const unregister = async (userId) => {
+    Logger.info('Unregistering user')
+    Logger.debug(`User: ${userId}`)
 
-    const path = `${Options.serverUrl}/v1/public/users/${userId}/preferences`
-    const bodyContent = JSON.stringify({
-      is_active: isActive
-    })
+    const path = `${Options.serverUrl}/v1/public/users/${userId}/unregister`
 
     let response
     try {
       const body = await fetch(path, {
         method: 'post',
-        headers: getHeaders(),
-        body: bodyContent
+        headers: getHeaders()
       })
       response = await body.json()
       Logger.debug('response', response)
@@ -76,11 +72,11 @@ const ApiClient = (() => {
       Logger.error('Could not execute the fetch operation', e)
     }
 
-    if (response && typeof response.is_active !== 'undefined') {
-      Logger.info('The user preferences were changed')
+    if (response && typeof response.result !== 'undefined') {
+      Logger.info('The user was unregistered')
       return true
     } else {
-      Logger.info('The user preferences could not be changed')
+      Logger.info('The user could not be unregistered')
       return false
     }
   }
@@ -95,7 +91,7 @@ const ApiClient = (() => {
 
   return {
     register,
-    updatePreferences,
+    unregister,
     getUser
   }
 })()

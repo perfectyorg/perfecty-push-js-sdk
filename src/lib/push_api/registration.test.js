@@ -20,29 +20,26 @@ beforeEach(() => {
   ApiClient.register.mockClear()
   ApiClient.getUser.mockClear()
   Storage.setUserId.mockClear()
-  Storage.setIsUserActive.mockClear()
   Storage.userId.mockClear()
   Storage.shouldRegisterUser.mockClear()
-  SettingsControl.userHasSubscribed.mockClear()
+  SettingsControl.userSubscribed.mockClear()
 })
 
 describe('when checking the registration', () => {
   it('skips the registration if the user is found', async () => {
-    Storage.userId.mockImplementationOnce(() => 'existing-uuid')
-    await Registration.check()
+    await Registration.check('existing-uuid')
     expect(ServiceInstaller.subscribeToPush).toHaveBeenCalledTimes(0)
     expect(ApiClient.register).toHaveBeenCalledTimes(0)
   })
   it('register the user if it is not found (null)', async () => {
     Storage.userId.mockImplementationOnce(() => null)
-    await Registration.check()
+    await Registration.check(null)
     expect(ServiceInstaller.subscribeToPush).toHaveBeenCalledTimes(1)
     expect(ApiClient.register).toHaveBeenCalledTimes(1)
   })
   it('register the user if it is not found (shouldRegisterUser)', async () => {
-    Storage.userId.mockImplementationOnce(() => 'existing-uuid')
     Storage.shouldRegisterUser.mockImplementationOnce(() => true)
-    await Registration.check()
+    await Registration.check('existing-uuid')
     expect(ServiceInstaller.subscribeToPush).toHaveBeenCalledTimes(1)
     expect(ApiClient.register).toHaveBeenCalledTimes(1)
   })
@@ -50,27 +47,26 @@ describe('when checking the registration', () => {
 
 describe('when registering the user', () => {
   it('calls the api and checks the opt in checkbox', async () => {
-    await Registration.register()
+    await Registration.register(null)
 
     expect(ServiceInstaller.subscribeToPush).toHaveBeenCalledTimes(1)
     expect(ApiClient.register).toHaveBeenCalledTimes(1)
-    expect(Storage.setIsUserActive).toHaveBeenNthCalledWith(1, true)
     expect(Storage.setUserId).toHaveBeenNthCalledWith(1, 'mocked-uuid')
-    expect(SettingsControl.userHasSubscribed).toHaveBeenNthCalledWith(1, true)
+    expect(SettingsControl.userSubscribed).toHaveBeenNthCalledWith(1)
   })
   it('calls the api but doesn\'t set the storage values if result = false', async () => {
     ApiClient.register.mockImplementationOnce(() => Promise.resolve(false))
-    await Registration.register()
+    await Registration.register(null)
 
     expect(ServiceInstaller.subscribeToPush).toHaveBeenCalledTimes(1)
     expect(ApiClient.register).toHaveBeenCalledTimes(1)
-    expect(Storage.setIsUserActive).toHaveBeenCalledTimes(0)
+    expect(Storage.setUserId).toHaveBeenCalledTimes(0)
   })
   it('doesn\'t call the api if there\'s no push subscription', async () => {
     ServiceInstaller.subscribeToPush.mockImplementationOnce(() => null)
-    await Registration.register()
+    await Registration.register(null)
 
     expect(ApiClient.register).toHaveBeenCalledTimes(0)
-    expect(Storage.setIsUserActive).toHaveBeenCalledTimes(0)
+    expect(Storage.setUserId).toHaveBeenCalledTimes(0)
   })
 })

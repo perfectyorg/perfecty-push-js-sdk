@@ -46,8 +46,9 @@ const DialogControl = (() => {
       if (Permission.isGranted()) {
         Logger.info('User has granted permissions')
 
+        const userId = Storage.userId()
         await ServiceInstaller.installIfMissing()
-        await Registration.register()
+        await Registration.register(userId)
       }
     }
 
