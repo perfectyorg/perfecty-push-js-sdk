@@ -8,13 +8,14 @@ import SettingsControl from '../../controls/settings'
  * Handle the User Registration
  */
 const Registration = (() => {
-  const check = async (userId) => {
+  const check = async (userId, optedOut) => {
     Logger.info('Checking user registration')
-    if (userId === null || Storage.shouldRegisterUser()) {
-      Logger.info('User was not found, registering')
+    if ((optedOut === false && userId === null) || Storage.shouldRegisterUser()) {
+      Logger.info('User should be registered, registering')
       await register(userId)
     } else {
-      Logger.info('User is already registered')
+      Logger.info('User should not be registered again')
+      Logger.debug('Values:', { userId: userId, optedOut: optedOut })
     }
   }
 
@@ -42,10 +43,6 @@ const Registration = (() => {
     Logger.info('Unregistering user')
 
     const response = await ApiClient.unregister(userId)
-    if (response !== false) {
-      await ServiceInstaller.removeInstallation()
-    }
-
     Logger.debug('Response: ', response)
     return response
   }

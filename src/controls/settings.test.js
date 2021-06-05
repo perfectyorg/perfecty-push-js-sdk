@@ -17,11 +17,12 @@ jest.mock('../lib/push_api/api_client', () => ({
   unregister: jest.fn(() => true)
 }))
 jest.mock('../lib/push_api/storage', () => ({
-  isUserActive: jest.fn(() => true),
   hasAskedNotifications: () => false,
   userId: () => 'mocked-uuid',
   setUserId: jest.fn(() => true),
-  setShouldRegisterUser: jest.fn(() => true)
+  setShouldRegisterUser: jest.fn(() => true),
+  optedOut: jest.fn(() => false),
+  setOptedOut: jest.fn(() => true)
 }))
 jest.mock('./dialog')
 jest.mock('../lib/push_api/service_installer')
@@ -33,8 +34,10 @@ beforeEach(() => {
   Permission.isDenied.mockClear()
   Permission.isGranted.mockClear()
   ApiClient.unregister.mockClear()
+  ApiClient.register.mockClear()
   ServiceInstaller.removeInstallation.mockClear()
   ServiceInstaller.subscribeToPush.mockClear()
+  ServiceInstaller.installIfMissing.mockClear()
   hideBellAfterSubscribeSpy = jest.spyOn(Options, 'hideBellAfterSubscribe', 'get')
   hideBellAfterSubscribeSpy.mockImplementation(() => false)
   DialogControl.show.mockClear()
@@ -60,7 +63,7 @@ describe('when the control is created', () => {
     expect(notificationControl.textContent).toEqual('')
   })
 
-  it('is hidden when hideBellAfterSubscribe is true and active=true', () => {
+  it('is hidden when hideBellAfterSubscribe is true', () => {
     hideBellAfterSubscribeSpy.mockImplementationOnce(() => true)
     SettingsControl.draw()
 
@@ -133,6 +136,8 @@ describe('when the subscribed check', () => {
     const notificationControl = document.getElementById('perfecty-push-settings-notification')
     expect(Storage.setUserId).toHaveBeenCalledTimes(1)
     expect(Storage.setShouldRegisterUser).toHaveBeenCalledTimes(1)
+    expect(ApiClient.register).toHaveBeenCalledTimes(1)
+    expect(ServiceInstaller.installIfMissing).toHaveBeenCalledTimes(1)
     expect(notificationControl.textContent).toEqual('')
   })
 })

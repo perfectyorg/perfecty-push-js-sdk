@@ -4,6 +4,7 @@ import DialogControl from './dialog'
 import Options from '../lib/push_api/options'
 import Logger from '../lib/logger'
 import Registration from '../lib/push_api/registration'
+import ServiceInstaller from '../lib/push_api/service_installer'
 
 const SettingsControl = (() => {
   const draw = () => {
@@ -20,22 +21,26 @@ const SettingsControl = (() => {
     const userId = Storage.userId()
     let result
     if (optedIn) {
+      await ServiceInstaller.installIfMissing()
       result = await Registration.register(userId)
     } else {
       result = await Registration.unregister(userId)
+      if (result !== false) {
+        await ServiceInstaller.removeInstallation()
+      }
     }
 
-    console.log(result)
     if (result === false) {
       showMessage(Options.settingsUpdateError)
     } else {
+      Storage.setOptedOut(!optedIn)
       setCheckboxOptIn(optedIn)
       showMessage('')
     }
   }
 
   const insertHTML = () => {
-    const subscribedBoxChecked = Storage.isUserActive() ? 'checked="checked"' : ''
+    const subscribedBoxChecked = Storage.optedOut() === false ? 'checked="checked"' : ''
     const html =
         '<div class="perfecty-push-settings-container">' +
         '  <div id="perfecty-push-settings-form">' +
@@ -49,7 +54,7 @@ const SettingsControl = (() => {
         '  </button>' +
         '</div>'
     document.body.insertAdjacentHTML('beforeend', html)
-    if (Options.hideBellAfterSubscribe === false || Storage.isUserActive() === false) {
+    if (Options.hideBellAfterSubscribe === false || Storage.optedOut() === true) {
       showContainer()
       toggleForm()
     }

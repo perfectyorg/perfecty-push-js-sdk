@@ -55,7 +55,7 @@ const ApiClient = (() => {
   }
 
   const unregister = async (userId) => {
-    Logger.info('Unregistering user')
+    Logger.info('Unregistering user in the server')
     Logger.debug(`User: ${userId}`)
 
     const path = `${Options.serverUrl}/v1/public/users/${userId}/unregister`

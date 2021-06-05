@@ -23,9 +23,9 @@ const ServiceInstaller = (() => {
 
   const removeInstallation = async () => {
     Logger.info('Removing installation')
-    const registration = await getPerfectyRegistration()
-    if (typeof registration !== 'undefined') {
-      await registration.unregister()
+    const swRegistration = await getPerfectyRegistration()
+    if (typeof swRegistration !== 'undefined') {
+      await swRegistration.unregister()
     }
     Storage.setUserId(null)
   }
