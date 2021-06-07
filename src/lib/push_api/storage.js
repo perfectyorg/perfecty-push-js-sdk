@@ -1,8 +1,8 @@
 const Storage = (() => {
   const userIdKey = 'perfecty_user_id'
   const hasAskedNotificationsKey = 'perfecty_asked_notifications'
-  const isUserActiveKey = 'perfecty_is_user_active'
   const shouldRegisterUserKey = 'perfecty_register_again'
+  const optedOuKey = 'perfecty_opted_out'
 
   const setUserId = (id) => {
     setItem(userIdKey, id)
@@ -22,16 +22,6 @@ const Storage = (() => {
     return value === 'yes'
   }
 
-  const setIsUserActive = (value) => {
-    value = value === true ? 'yes' : 'no'
-    setItem(isUserActiveKey, value)
-  }
-
-  const isUserActive = () => {
-    const value = getItem(isUserActiveKey)
-    return value === 'yes'
-  }
-
   const setShouldRegisterUser = (value) => {
     value = value === true ? 'yes' : 'no'
     setItem(shouldRegisterUserKey, value)
@@ -39,6 +29,16 @@ const Storage = (() => {
 
   const shouldRegisterUser = () => {
     const value = getItem(shouldRegisterUserKey)
+    return value === 'yes'
+  }
+
+  const setOptedOut = (value) => {
+    value = value === true ? 'yes' : 'no'
+    setItem(optedOuKey, value)
+  }
+
+  const optedOut = () => {
+    const value = getItem(optedOuKey)
     return value === 'yes'
   }
 
@@ -59,10 +59,10 @@ const Storage = (() => {
     userId,
     setHasAskedNotifications,
     hasAskedNotifications,
-    setIsUserActive,
-    isUserActive,
     setShouldRegisterUser,
-    shouldRegisterUser
+    shouldRegisterUser,
+    setOptedOut,
+    optedOut
   }
 })()
 

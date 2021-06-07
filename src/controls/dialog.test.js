@@ -11,6 +11,7 @@ jest.mock('../lib/push_api/permission', () => ({
   askIfNotDenied: jest.fn().mockReturnValueOnce('granted')
 }))
 jest.mock('../lib/push_api/storage', () => ({
+  userId: jest.fn(() => null),
   hasAskedNotifications: jest.fn(() => false),
   setHasAskedNotifications: jest.fn(() => true)
 }))

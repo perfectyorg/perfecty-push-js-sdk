@@ -34,8 +34,8 @@ describe('when the app is started', () => {
     ServiceInstaller.installIfMissing.mockClear()
     DialogControl.draw.mockClear()
     SettingsControl.draw.mockClear()
-    SettingsControl.setCheckboxActive.mockClear()
-    SettingsControl.setActive.mockClear()
+    SettingsControl.setCheckboxOptIn.mockClear()
+    SettingsControl.changeOptIn.mockClear()
     Options.enabled = true
   })
 
@@ -79,7 +79,7 @@ describe('when the app is started', () => {
     const result = await PerfectyPush.start()
 
     expect(result).toEqual(true)
-    expect(SettingsControl.setActive).toHaveBeenCalledTimes(0)
+    expect(SettingsControl.changeOptIn).toHaveBeenCalledTimes(0)
     expect(Registration.check).toHaveBeenCalledTimes(1)
   })
 

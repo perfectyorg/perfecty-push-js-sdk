@@ -16,14 +16,18 @@ const ServiceInstaller = (() => {
     if (userId !== null) {
       const user = await ApiClient.getUser(userId)
       if (user === null) {
-        Logger.info('Removing old subscription')
-        const registration = await getPerfectyRegistration()
-        if (typeof registration !== 'undefined') {
-          await registration.unregister()
-        }
-        Storage.setUserId(null)
+        await removeInstallation()
       }
     }
+  }
+
+  const removeInstallation = async () => {
+    Logger.info('Removing installation')
+    const swRegistration = await getPerfectyRegistration()
+    if (typeof swRegistration !== 'undefined') {
+      await swRegistration.unregister()
+    }
+    Storage.setUserId(null)
   }
 
   const removeConflicts = async () => {
@@ -144,6 +148,7 @@ const ServiceInstaller = (() => {
     TYPE_OLD_SCOPE,
     removeOldSubscription,
     removeConflicts,
+    removeInstallation,
     subscribeToPush,
     getInstallationType,
     installIfMissing

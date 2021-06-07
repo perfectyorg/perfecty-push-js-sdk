@@ -4,6 +4,7 @@ import SettingsControl from './controls/settings'
 import Registration from './lib/push_api/registration'
 import Permission from './lib/push_api/permission'
 import Features from './lib/push_api/features'
+import Storage from './lib/push_api/storage'
 import Logger from './lib/logger'
 import ServiceInstaller from './lib/push_api/service_installer'
 
@@ -27,12 +28,12 @@ const PerfectyPush = (() => {
 
     drawHtmlControls()
 
-    if (Permission.isGranted()) {
-      Logger.info('The site has permissions granted')
+    if (Permission.isGranted() && Storage.optedOut() === false) {
+      Logger.info('The user is subscribed to Push Notifications')
       await checkInstallation()
       await checkRegistration()
     } else {
-      Logger.info('The site has not permissions granted')
+      Logger.info('The user is not subscribed to Push Notifications')
     }
 
     Logger.info('Perfecty Push SDK was started')
@@ -65,7 +66,7 @@ const PerfectyPush = (() => {
   const checkRegistration = async () => {
     Logger.info('Checking registration')
 
-    await Registration.check()
+    await Registration.check(Storage.userId(), Storage.optedOut())
   }
 
   return {

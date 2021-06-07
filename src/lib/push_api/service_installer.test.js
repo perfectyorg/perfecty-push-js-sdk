@@ -6,7 +6,7 @@ import Navigator from './navigator'
 import ServiceInstaller from './service_installer'
 
 jest.mock('./api_client', () => ({
-  getUser: jest.fn(() => Promise.resolve({ is_active: true, user_id: 'user-uuid' }))
+  getUser: jest.fn(() => Promise.resolve({ uuid: 'user-uuid' }))
 }))
 jest.mock('./storage')
 jest.mock('./navigator')

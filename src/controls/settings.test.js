@@ -5,6 +5,7 @@ import ApiClient from '../lib/push_api/api_client'
 import SettingsControl from './settings'
 import DialogControl from './dialog'
 import Options from '../lib/push_api/options'
+import ServiceInstaller from '../lib/push_api/service_installer'
 
 jest.mock('../lib/push_api/permission', () => ({
   hasNeverAsked: jest.fn().mockImplementation(() => true),
@@ -12,16 +13,19 @@ jest.mock('../lib/push_api/permission', () => ({
   isGranted: jest.fn().mockImplementation(() => true)
 }))
 jest.mock('../lib/push_api/api_client', () => ({
-  updatePreferences: jest.fn(() => true)
+  register: jest.fn(() => true),
+  unregister: jest.fn(() => true)
 }))
 jest.mock('../lib/push_api/storage', () => ({
-  isUserActive: jest.fn(() => true),
   hasAskedNotifications: () => false,
   userId: () => 'mocked-uuid',
-  setIsUserActive: jest.fn(() => true)
+  setUserId: jest.fn(() => true),
+  setShouldRegisterUser: jest.fn(() => true),
+  optedOut: jest.fn(() => false),
+  setOptedOut: jest.fn(() => true)
 }))
-jest.mock('../lib/push_api/registration')
 jest.mock('./dialog')
+jest.mock('../lib/push_api/service_installer')
 
 let hideBellAfterSubscribeSpy
 
@@ -29,8 +33,11 @@ beforeEach(() => {
   Permission.hasNeverAsked.mockClear()
   Permission.isDenied.mockClear()
   Permission.isGranted.mockClear()
-  Storage.setIsUserActive.mockClear()
-  ApiClient.updatePreferences.mockClear()
+  ApiClient.unregister.mockClear()
+  ApiClient.register.mockClear()
+  ServiceInstaller.removeInstallation.mockClear()
+  ServiceInstaller.subscribeToPush.mockClear()
+  ServiceInstaller.installIfMissing.mockClear()
   hideBellAfterSubscribeSpy = jest.spyOn(Options, 'hideBellAfterSubscribe', 'get')
   hideBellAfterSubscribeSpy.mockImplementation(() => false)
   DialogControl.show.mockClear()
@@ -56,7 +63,7 @@ describe('when the control is created', () => {
     expect(notificationControl.textContent).toEqual('')
   })
 
-  it('is hidden when hideBellAfterSubscribe is true and active=true', () => {
+  it('is hidden when hideBellAfterSubscribe is true', () => {
     hideBellAfterSubscribeSpy.mockImplementationOnce(() => true)
     SettingsControl.draw()
 
@@ -77,37 +84,60 @@ describe('when the control is created', () => {
 })
 
 describe('when the subscribed check', () => {
-  it('is unchecked, user is set as inactive', async () => {
+  it('is unchecked, user is unregistered', async () => {
     Permission.hasNeverAsked.mockImplementationOnce(() => false)
+    ServiceInstaller.removeInstallation.mockImplementationOnce(() => true)
 
     SettingsControl.draw()
 
     await simulateChangeOnSubscribed(false)
     const notificationControl = document.getElementById('perfecty-push-settings-notification')
-    expect(Storage.setIsUserActive).toHaveBeenCalledTimes(1)
+    expect(ApiClient.unregister).toHaveBeenCalledTimes(1)
+    expect(ServiceInstaller.removeInstallation).toHaveBeenCalledTimes(1)
     expect(notificationControl.textContent).toEqual('')
   })
 
-  it('is unchecked and there\'s an error, show message', async () => {
-    ApiClient.updatePreferences.mockImplementationOnce(() => false)
-    Permission.hasNeverAsked.mockImplementationOnce(() => false)
-
-    SettingsControl.draw()
-
-    await simulateChangeOnSubscribed(false)
-    const notificationControl = document.getElementById('perfecty-push-settings-notification')
-    expect(Storage.setIsUserActive).toHaveBeenCalledTimes(0)
-    expect(notificationControl.textContent).toEqual('Could not change the preference, please try again')
-  })
-
-  it('is checked and permissions are granted, sets the user active', async () => {
+  it('is checked and there\'s an error, show message', async () => {
+    ApiClient.register.mockImplementationOnce(() => false)
+    ServiceInstaller.subscribeToPush.mockImplementationOnce(() => ({ test: 'test' }))
     Permission.hasNeverAsked.mockImplementationOnce(() => false)
 
     SettingsControl.draw()
 
     await simulateChangeOnSubscribed(true)
     const notificationControl = document.getElementById('perfecty-push-settings-notification')
-    expect(Storage.setIsUserActive).toHaveBeenCalledTimes(1)
+    expect(ApiClient.register).toHaveBeenCalledTimes(1)
+    expect(ServiceInstaller.subscribeToPush).toHaveBeenCalledTimes(1)
+    expect(Storage.setUserId).toHaveBeenCalledTimes(0)
+    expect(notificationControl.textContent).toEqual('Could not change the preference, please try again')
+  })
+
+  it('is unchecked and there\'s an error, show message', async () => {
+    ApiClient.unregister.mockImplementationOnce(() => false)
+    Permission.hasNeverAsked.mockImplementationOnce(() => false)
+
+    SettingsControl.draw()
+
+    await simulateChangeOnSubscribed(false)
+    const notificationControl = document.getElementById('perfecty-push-settings-notification')
+    expect(ApiClient.unregister).toHaveBeenCalledTimes(1)
+    expect(ServiceInstaller.removeInstallation).toHaveBeenCalledTimes(0)
+    expect(notificationControl.textContent).toEqual('Could not change the preference, please try again')
+  })
+
+  it('is checked and permissions are granted, register the user again', async () => {
+    ApiClient.register.mockImplementationOnce(() => true)
+    Permission.hasNeverAsked.mockImplementationOnce(() => false)
+    ServiceInstaller.subscribeToPush.mockImplementationOnce(() => ({ test: 'test' }))
+
+    SettingsControl.draw()
+
+    await simulateChangeOnSubscribed(true)
+    const notificationControl = document.getElementById('perfecty-push-settings-notification')
+    expect(Storage.setUserId).toHaveBeenCalledTimes(1)
+    expect(Storage.setShouldRegisterUser).toHaveBeenCalledTimes(1)
+    expect(ApiClient.register).toHaveBeenCalledTimes(1)
+    expect(ServiceInstaller.installIfMissing).toHaveBeenCalledTimes(1)
     expect(notificationControl.textContent).toEqual('')
   })
 })
