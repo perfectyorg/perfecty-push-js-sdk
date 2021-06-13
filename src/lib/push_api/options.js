@@ -18,6 +18,7 @@ const Options = (() => {
   let loggerLevel = Logger.ERROR
   let loggerVerbose = false
   let hideBellAfterSubscribe = false
+  let askPermissionsDirectly = false
 
   const init = (custom) => {
     custom = typeof custom === 'undefined' ? {} : custom
@@ -39,6 +40,7 @@ const Options = (() => {
     Options.loggerLevel = custom.loggerLevel
     Options.loggerVerbose = custom.loggerVerbose
     Options.hideBellAfterSubscribe = custom.hideBellAfterSubscribe
+    Options.askPermissionsDirectly = custom.askPermissionsDirectly
   }
 
   function getValue (customValue, defaultValue) {
@@ -91,7 +93,9 @@ const Options = (() => {
     get loggerVerbose () { return loggerVerbose },
     set loggerVerbose (v) { loggerVerbose = getValue(v, loggerVerbose) },
     get hideBellAfterSubscribe () { return hideBellAfterSubscribe },
-    set hideBellAfterSubscribe (v) { hideBellAfterSubscribe = getValue(v, hideBellAfterSubscribe) }
+    set hideBellAfterSubscribe (v) { hideBellAfterSubscribe = getValue(v, hideBellAfterSubscribe) },
+    get askPermissionsDirectly () { return askPermissionsDirectly },
+    set askPermissionsDirectly (v) { askPermissionsDirectly = getValue(v, askPermissionsDirectly) }
   }
 })()
 
