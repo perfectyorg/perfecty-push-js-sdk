@@ -3,6 +3,7 @@ import ApiClient from './api_client'
 import Logger from '../logger'
 import Storage from './storage'
 import SettingsControl from '../../controls/settings'
+import Options from './options'
 
 /**
  * Handle the User Registration
@@ -29,7 +30,10 @@ const Registration = (() => {
       if (response !== false) {
         Storage.setUserId(response.uuid)
         Storage.setShouldRegisterUser(false)
-        SettingsControl.userSubscribed()
+
+        if (!Options.askPermissionsDirectly) {
+          SettingsControl.userSubscribed()
+        }
 
         return response
       }

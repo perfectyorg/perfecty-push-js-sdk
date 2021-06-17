@@ -11,7 +11,9 @@ import Options from './lib/push_api/options'
 jest.mock('./lib/push_api/permission', () => ({
   __esModule: true,
   default: {
-    isGranted: jest.fn(() => true)
+    isGranted: jest.fn(() => true),
+    hasNeverAsked: jest.fn(() => true),
+    askIfNotDenied: jest.fn(() => true)
   }
 }))
 
@@ -19,17 +21,22 @@ jest.mock('./lib/push_api/features', () => ({
   isSupported: jest.fn(() => true)
 }))
 jest.mock('./lib/push_api/registration', () => ({
-  check: jest.fn(() => Promise.resolve({ uuid: 'mocked-uuid' }))
+  check: jest.fn(() => Promise.resolve({ uuid: 'mocked-uuid' })),
+  register: jest.fn(() => true)
 }))
 jest.mock('./lib/push_api/service_installer')
 jest.mock('./controls/dialog')
 jest.mock('./controls/settings')
 
+let askPermissionsDirectlySpy
 describe('when the app is started', () => {
   beforeEach(() => {
     Permission.isGranted.mockClear()
+    Permission.hasNeverAsked.mockClear()
+    Permission.askIfNotDenied.mockClear()
     Features.isSupported.mockClear()
     Registration.check.mockClear()
+    Registration.register.mockClear()
     ServiceInstaller.removeConflicts.mockClear()
     ServiceInstaller.installIfMissing.mockClear()
     DialogControl.draw.mockClear()
@@ -37,6 +44,8 @@ describe('when the app is started', () => {
     SettingsControl.setCheckboxOptIn.mockClear()
     SettingsControl.changeOptIn.mockClear()
     Options.enabled = true
+    askPermissionsDirectlySpy = jest.spyOn(Options, 'askPermissionsDirectly', 'get')
+    askPermissionsDirectlySpy.mockImplementation(() => false)
   })
 
   it('works with supported features and enabled', async () => {
@@ -63,6 +72,37 @@ describe('when the app is started', () => {
     expect(result).toEqual(true)
     expect(DialogControl.draw).toHaveBeenCalledTimes(1)
     expect(SettingsControl.draw).toHaveBeenCalledTimes(1)
+  })
+
+  it('ask direct permissions', async () => {
+    askPermissionsDirectlySpy.mockImplementationOnce(() => true)
+    const result = await PerfectyPush.start()
+
+    expect(result).toEqual(true)
+    expect(DialogControl.draw).toHaveBeenCalledTimes(0)
+    expect(SettingsControl.draw).toHaveBeenCalledTimes(0)
+  })
+
+  it('skips asking if permissions already granted', async () => {
+    askPermissionsDirectlySpy.mockImplementationOnce(() => true)
+    Permission.hasNeverAsked.mockImplementationOnce(() => false)
+    const result = await PerfectyPush.start()
+
+    expect(result).toEqual(true)
+    expect(Permission.askIfNotDenied).toHaveBeenCalledTimes(0)
+    expect(DialogControl.draw).toHaveBeenCalledTimes(0)
+    expect(SettingsControl.draw).toHaveBeenCalledTimes(0)
+  })
+
+  it('skips registration if permissions is denied', async () => {
+    askPermissionsDirectlySpy.mockImplementationOnce(() => true)
+    Permission.isGranted.mockImplementationOnce(() => false)
+    const result = await PerfectyPush.start()
+
+    expect(result).toEqual(true)
+    expect(Registration.register).toHaveBeenCalledTimes(0)
+    expect(DialogControl.draw).toHaveBeenCalledTimes(0)
+    expect(SettingsControl.draw).toHaveBeenCalledTimes(0)
   })
 
   it('register and install service if permission granted', async () => {

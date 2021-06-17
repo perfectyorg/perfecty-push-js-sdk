@@ -26,7 +26,11 @@ const PerfectyPush = (() => {
       return false
     }
 
-    drawHtmlControls()
+    if (Options.askPermissionsDirectly) {
+      await askPermissionsDirectly()
+    } else {
+      drawHtmlControls()
+    }
 
     if (Permission.isGranted() && Storage.optedOut() === false) {
       Logger.info('The user is subscribed to Push Notifications')
@@ -53,6 +57,22 @@ const PerfectyPush = (() => {
 
     DialogControl.draw()
     SettingsControl.draw()
+  }
+
+  const askPermissionsDirectly = async () => {
+    if (!Permission.hasNeverAsked()) {
+      // if we already have asked for permissions, we don't ask again
+      return true
+    }
+
+    await Permission.askIfNotDenied()
+    if (Permission.isGranted()) {
+      Logger.info('User has granted permissions')
+
+      const userId = Storage.userId()
+      await ServiceInstaller.installIfMissing()
+      await Registration.register(userId)
+    }
   }
 
   const checkInstallation = async () => {
