@@ -15,6 +15,7 @@ const ServiceWorker = (() => {
         icon: data.icon,
         body: data.body,
         image: data.image,
+        requireInteraction: data.require_interaction,
         data: {
           url: data.extra.url_to_open
         }
