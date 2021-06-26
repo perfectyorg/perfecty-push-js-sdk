@@ -18,7 +18,8 @@ const defaultOptions = {
   loggerLevel: Logger.ERROR,
   loggerVerbose: false,
   hideBellAfterSubscribe: false,
-  askPermissionsDirectly: false
+  askPermissionsDirectly: false,
+  unregisterConflictsExpression: ''
 }
 
 describe('options', () => {
@@ -73,6 +74,7 @@ describe('options', () => {
     expect(value.loggerVerbose).toEqual(expected.loggerVerbose)
     expect(value.hideBellAfterSubscribe).toEqual(expected.hideBellAfterSubscribe)
     expect(value.askPermissionsDirectly).toEqual(expected.askPermissionsDirectly)
+    expect(value.unregisterConflictsExpression).toEqual(expected.unregisterConflictsExpression)
     return true
   }
 })

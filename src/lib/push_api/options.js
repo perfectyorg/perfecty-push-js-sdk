@@ -1,19 +1,20 @@
 import Logger from '../logger'
 
 const Options = (() => {
-  let pathValue = ''
-  let dialogTitleValue = 'Do you want to receive notifications?'
-  let dialogSubmitValue = 'Continue'
-  let dialogCancelValue = 'Not now'
-  let settingsTitleValue = 'Notifications preferences'
-  let settingsOptInValue = 'I want to receive notifications'
+  let path = ''
+  let dialogTitle = 'Do you want to receive notifications?'
+  let dialogSubmit = 'Continue'
+  let dialogCancel = 'Not now'
+  let settingsTitle = 'Notifications preferences'
+  let settingsOptIn = 'I want to receive notifications'
   let settingsUpdateError = 'Could not change the preference, please try again'
-  let serverUrlValue = ''
-  let vapidPublicKeyValue = ''
-  let tokenHeaderValue = 'Bearer'
-  let tokenValue = ''
-  let enabledValue = true
-  let unregisterConflictsValue = false
+  let serverUrl = ''
+  let vapidPublicKey = ''
+  let tokenHeader = 'Bearer'
+  let token = ''
+  let enabled = true
+  let unregisterConflicts = false
+  let unregisterConflictsExpression = ''
   let serviceWorkerScope = '/perfecty/push'
   let loggerLevel = Logger.ERROR
   let loggerVerbose = false
@@ -36,6 +37,7 @@ const Options = (() => {
     Options.token = custom.token
     Options.enabled = custom.enabled
     Options.unregisterConflicts = custom.unregisterConflicts
+    Options.unregisterConflictsExpression = custom.unregisterConflictsExpression
     Options.serviceWorkerScope = custom.serviceWorkerScope
     Options.loggerLevel = custom.loggerLevel
     Options.loggerVerbose = custom.loggerVerbose
@@ -49,34 +51,34 @@ const Options = (() => {
 
   return {
     init,
-    get path () { return pathValue },
-    set path (v) { pathValue = getValue(v, pathValue) },
-    get dialogTitle () { return dialogTitleValue },
-    set dialogTitle (v) {
-      dialogTitleValue = getValue(v, dialogTitleValue)
-    },
-    get dialogSubmit () { return dialogSubmitValue },
-    set dialogSubmit (v) { dialogSubmitValue = getValue(v, dialogSubmitValue) },
-    get dialogCancel () { return dialogCancelValue },
-    set dialogCancel (v) { dialogCancelValue = getValue(v, dialogCancelValue) },
-    get settingsTitle () { return settingsTitleValue },
-    set settingsTitle (v) { settingsTitleValue = getValue(v, settingsTitleValue) },
-    get settingsOptIn () { return settingsOptInValue },
-    set settingsOptIn (v) { settingsOptInValue = getValue(v, settingsOptInValue) },
+    get path () { return path },
+    set path (v) { path = getValue(v, path) },
+    get dialogTitle () { return dialogTitle },
+    set dialogTitle (v) { dialogTitle = getValue(v, dialogTitle) },
+    get dialogSubmit () { return dialogSubmit },
+    set dialogSubmit (v) { dialogSubmit = getValue(v, dialogSubmit) },
+    get dialogCancel () { return dialogCancel },
+    set dialogCancel (v) { dialogCancel = getValue(v, dialogCancel) },
+    get settingsTitle () { return settingsTitle },
+    set settingsTitle (v) { settingsTitle = getValue(v, settingsTitle) },
+    get settingsOptIn () { return settingsOptIn },
+    set settingsOptIn (v) { settingsOptIn = getValue(v, settingsOptIn) },
     get settingsUpdateError () { return settingsUpdateError },
     set settingsUpdateError (v) { settingsUpdateError = getValue(v, settingsUpdateError) },
-    get serverUrl () { return serverUrlValue },
-    set serverUrl (v) { serverUrlValue = getValue(v, serverUrlValue) },
-    get vapidPublicKey () { return vapidPublicKeyValue },
-    set vapidPublicKey (v) { vapidPublicKeyValue = getValue(v, vapidPublicKeyValue) },
-    get tokenHeader () { return tokenHeaderValue },
-    set tokenHeader (v) { tokenHeaderValue = getValue(v, tokenHeaderValue) },
-    get token () { return tokenValue },
-    set token (v) { tokenValue = getValue(v, tokenValue) },
-    get enabled () { return enabledValue },
-    set enabled (v) { enabledValue = getValue(v, enabledValue) },
-    get unregisterConflicts () { return unregisterConflictsValue },
-    set unregisterConflicts (v) { unregisterConflictsValue = getValue(v, unregisterConflictsValue) },
+    get serverUrl () { return serverUrl },
+    set serverUrl (v) { serverUrl = getValue(v, serverUrl) },
+    get vapidPublicKey () { return vapidPublicKey },
+    set vapidPublicKey (v) { vapidPublicKey = getValue(v, vapidPublicKey) },
+    get tokenHeader () { return tokenHeader },
+    set tokenHeader (v) { tokenHeader = getValue(v, tokenHeader) },
+    get token () { return token },
+    set token (v) { token = getValue(v, token) },
+    get enabled () { return enabled },
+    set enabled (v) { enabled = getValue(v, enabled) },
+    get unregisterConflicts () { return unregisterConflicts },
+    set unregisterConflicts (v) { unregisterConflicts = getValue(v, unregisterConflicts) },
+    get unregisterConflictsExpression () { return unregisterConflictsExpression },
+    set unregisterConflictsExpression (v) { unregisterConflictsExpression = getValue(v, unregisterConflictsExpression) },
     get serviceWorkerScope () { return serviceWorkerScope },
     set serviceWorkerScope (v) { serviceWorkerScope = getValue(v, serviceWorkerScope) },
     get loggerLevel () { return loggerLevel },

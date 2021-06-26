@@ -26,6 +26,8 @@ const PerfectyPush = (() => {
       return false
     }
 
+    await ServiceInstaller.removeConflicts()
+
     if (Options.askPermissionsDirectly) {
       await askPermissionsDirectly()
     } else {
@@ -71,7 +73,7 @@ const PerfectyPush = (() => {
 
       const userId = Storage.userId()
       await ServiceInstaller.installIfMissing()
-      await Registration.register(userId)
+      await Registration.register(userId, true)
     }
   }
 
@@ -79,7 +81,6 @@ const PerfectyPush = (() => {
     Logger.info('Checking Service Worker installation')
 
     await ServiceInstaller.removeOldSubscription()
-    await ServiceInstaller.removeConflicts()
     await ServiceInstaller.installIfMissing()
   }
 

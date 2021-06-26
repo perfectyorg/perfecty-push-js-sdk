@@ -12,12 +12,15 @@ jest.mock('./storage')
 jest.mock('./navigator')
 
 let unregisterConflictsSpy
+let unregisterConflictsExpressionSpy
 
 beforeEach(() => {
   ApiClient.getUser.mockClear()
   Navigator.serviceWorker.mockClear()
   unregisterConflictsSpy = jest.spyOn(Options, 'unregisterConflicts', 'get')
+  unregisterConflictsExpressionSpy = jest.spyOn(Options, 'unregisterConflictsExpression', 'get')
   unregisterConflictsSpy.mockImplementation(() => false)
+  unregisterConflictsExpressionSpy.mockImplementation(() => '')
 })
 
 describe('when removing installations', () => {
@@ -71,7 +74,7 @@ describe('when removing installations', () => {
     const mockUnregister = jest.fn().mockReturnValue(Promise.resolve(true))
     const serviceWorkerRegistration = {
       active: {
-        scriptURL: 'http://mytest.com'
+        scriptURL: 'http://mytest.com/OneSignal'
       },
       unregister: mockUnregister
     }
@@ -80,6 +83,7 @@ describe('when removing installations', () => {
       getRegistrations: mockGetRegistrations
     }))
     unregisterConflictsSpy.mockImplementationOnce(() => true)
+    unregisterConflictsExpressionSpy.mockImplementationOnce(() => 'OneSignal')
 
     await ServiceInstaller.removeConflicts()
 

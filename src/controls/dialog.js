@@ -48,7 +48,7 @@ const DialogControl = (() => {
 
         const userId = Storage.userId()
         await ServiceInstaller.installIfMissing()
-        await Registration.register(userId)
+        await Registration.register(userId, true)
       }
     }
 

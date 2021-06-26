@@ -31,15 +31,17 @@ const ServiceInstaller = (() => {
   }
 
   const removeConflicts = async () => {
-    Logger.info('Checking the installed service workers')
+    Logger.info('Conflicting workers removal')
 
     // we go through all the already installed service workers
+    // we don't skip all the block if Options.unregisterConflict == false because
+    // we need to unregister our SDK's old scope changes as well
     const registrations = await Navigator.serviceWorker().getRegistrations()
     for (const registration of registrations) {
       const installedType = await getInstallationType(registration)
       Logger.debug('installedType', installedType)
 
-      if (installedType === TYPE_CONFLICT && Options.unregisterConflicts) {
+      if (installedType === TYPE_CONFLICT && shouldRemoveConflict(registration)) {
         await registration.unregister()
         Logger.info('Conflicting service worker unregistered', registration)
       } else if (installedType === TYPE_OLD_SCOPE) {
@@ -90,6 +92,11 @@ const ServiceInstaller = (() => {
     } else {
       return TYPE_CONFLICT
     }
+  }
+
+  const shouldRemoveConflict = (registration) => {
+    const re = new RegExp(Options.unregisterConflictsExpression, 'i')
+    return Options.unregisterConflicts && re.test(registration.active.scriptURL)
   }
 
   const getPerfectyRegistration = async () => {

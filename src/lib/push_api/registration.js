@@ -20,13 +20,13 @@ const Registration = (() => {
     }
   }
 
-  const register = async (userId) => {
+  const register = async (userId, firstTime) => {
     Logger.info('Registering user')
 
     const pushSubscription = await ServiceInstaller.subscribeToPush()
     if (pushSubscription !== null) {
       Logger.info('Sending user registration')
-      const response = await ApiClient.register(userId, pushSubscription)
+      const response = await ApiClient.register(userId, pushSubscription, firstTime)
       if (response !== false) {
         Storage.setUserId(response.uuid)
         Storage.setShouldRegisterUser(false)

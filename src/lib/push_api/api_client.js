@@ -2,13 +2,17 @@ import Logger from '../logger'
 import Options from './options'
 
 const ApiClient = (() => {
-  const register = async (userId, pushSubscription) => {
+  const register = async (userId, pushSubscription, firstTime) => {
     Logger.info('Registering user in the server')
+    if (typeof firstTime === 'undefined') {
+      firstTime = false
+    }
 
     const path = `${Options.serverUrl}/v1/public/users`
     const bodyContent = JSON.stringify({
       user: pushSubscription,
-      user_id: userId
+      user_id: userId,
+      first_time: firstTime
     })
 
     const body = await fetch(path, {
