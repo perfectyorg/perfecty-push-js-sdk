@@ -21,13 +21,16 @@ const DialogControl = (() => {
   }
 
   const insertHTML = () => {
+    const promptIcon = Options.promptIconUrl ? '<img src="' + Options.promptIconUrl + '" alt="Perfecty" class="perfecty-push-dialog-icon"/>' : ''
     const html =
         '<div class="site perfecty-push-dialog-container" id="perfecty-push-dialog-container">' +
-        '  <div class="perfecty-push-dialog-box">' +
-        '    <div class="perfecty-push-dialog-title">' + Options.dialogTitle + '</div>' +
-        '    <div class="perfecty-push-dialog-buttons">' +
-        '      <button id="perfecty-push-dialog-cancel" type="button" class="button secondary">' + Options.dialogCancel + '</button>' +
-        '      <button id="perfecty-push-dialog-subscribe" type="button" class="button primary">' + Options.dialogSubmit + '</button> ' +
+        '  <div class="perfecty-push-dialog-box">' + promptIcon +
+        '    <div class="perfecty-push-dialog-form">' +
+        '      <div class="perfecty-push-dialog-title">' + Options.dialogTitle + '</div>' +
+        '      <div class="perfecty-push-dialog-buttons">' +
+        '        <button id="perfecty-push-dialog-cancel" type="button" class="button secondary">' + Options.dialogCancel + '</button>' +
+        '        <button id="perfecty-push-dialog-subscribe" type="button" class="button primary">' + Options.dialogSubmit + '</button> ' +
+        '      </div>' +
         '    </div>' +
         '  </div>' +
         '</div>'

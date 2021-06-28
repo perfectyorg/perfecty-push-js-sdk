@@ -35,7 +35,7 @@ describe('when the dialog is created', () => {
 
     DialogControl.draw()
 
-    const expectedHTML = '<div class="site perfecty-push-dialog-container" id="perfecty-push-dialog-container" style="display: none;">  <div class="perfecty-push-dialog-box">    <div class="perfecty-push-dialog-title">Do you want to receive notifications?</div>    <div class="perfecty-push-dialog-buttons">      <button id="perfecty-push-dialog-cancel" type="button" class="button secondary">Not now</button>      <button id="perfecty-push-dialog-subscribe" type="button" class="button primary">Continue</button>     </div>  </div></div>'
+    const expectedHTML = '<div class="site perfecty-push-dialog-container" id="perfecty-push-dialog-container" style="display: none;">  <div class="perfecty-push-dialog-box">    <div class="perfecty-push-dialog-form">      <div class="perfecty-push-dialog-title">Do you want to receive notifications?</div>      <div class="perfecty-push-dialog-buttons">        <button id="perfecty-push-dialog-cancel" type="button" class="button secondary">Not now</button>        <button id="perfecty-push-dialog-subscribe" type="button" class="button primary">Continue</button>       </div>    </div>  </div></div>'
     expect(document.body.innerHTML).toEqual(expectedHTML)
     expect(isShown()).toEqual(false)
   })
