@@ -12,7 +12,7 @@ jest.mock('./lib/push_api/permission', () => ({
   __esModule: true,
   default: {
     isGranted: jest.fn(() => true),
-    hasNeverAsked: jest.fn(() => true),
+    askedAlready: jest.fn(() => false),
     askIfNotDenied: jest.fn(() => true)
   }
 }))
@@ -29,10 +29,11 @@ jest.mock('./controls/dialog')
 jest.mock('./controls/settings')
 
 let askPermissionsDirectlySpy
+let visitsToDisplayPromptSpy
 describe('when the app is started', () => {
   beforeEach(() => {
     Permission.isGranted.mockClear()
-    Permission.hasNeverAsked.mockClear()
+    Permission.askedAlready.mockClear()
     Permission.askIfNotDenied.mockClear()
     Features.isSupported.mockClear()
     Registration.check.mockClear()
@@ -46,6 +47,8 @@ describe('when the app is started', () => {
     Options.enabled = true
     askPermissionsDirectlySpy = jest.spyOn(Options, 'askPermissionsDirectly', 'get')
     askPermissionsDirectlySpy.mockImplementation(() => false)
+    visitsToDisplayPromptSpy = jest.spyOn(Options, 'visitsToDisplayPrompt', 'get')
+    visitsToDisplayPromptSpy.mockImplementation(() => 0)
   })
 
   it('works with supported features and enabled', async () => {
@@ -64,6 +67,16 @@ describe('when the app is started', () => {
     const result = await PerfectyPush.start()
     expect(result).toEqual(false)
     expect(Features.isSupported).toHaveBeenCalledTimes(1)
+  })
+
+  it('skips if visitsToDisplayPrompt not reached', async () => {
+    visitsToDisplayPromptSpy.mockImplementationOnce(() => 100)
+    const result = await PerfectyPush.start()
+
+    expect(result).toEqual(true)
+    expect(Permission.askIfNotDenied).toHaveBeenCalledTimes(0)
+    expect(DialogControl.draw).toHaveBeenCalledTimes(0)
+    expect(SettingsControl.draw).toHaveBeenCalledTimes(0)
   })
 
   it('draws the controls', async () => {
@@ -85,7 +98,9 @@ describe('when the app is started', () => {
 
   it('skips asking if permissions already granted', async () => {
     askPermissionsDirectlySpy.mockImplementationOnce(() => true)
-    Permission.hasNeverAsked.mockImplementationOnce(() => false)
+    // the first one is for the shouldDisplayPrompt check, the second for the permission granted
+    Permission.askedAlready.mockImplementationOnce(() => true)
+    Permission.askedAlready.mockImplementationOnce(() => true)
     const result = await PerfectyPush.start()
 
     expect(result).toEqual(true)

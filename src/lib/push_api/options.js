@@ -21,6 +21,7 @@ const Options = (() => {
   let hideBellAfterSubscribe = false
   let askPermissionsDirectly = false
   let promptIconUrl = ''
+  let visitsToDisplayPrompt = 0
 
   const init = (custom) => {
     custom = typeof custom === 'undefined' ? {} : custom
@@ -45,6 +46,7 @@ const Options = (() => {
     Options.hideBellAfterSubscribe = custom.hideBellAfterSubscribe
     Options.askPermissionsDirectly = custom.askPermissionsDirectly
     Options.promptIconUrl = custom.promptIconUrl
+    Options.visitsToDisplayPrompt = custom.visitsToDisplayPrompt
   }
 
   function getValue (customValue, defaultValue) {
@@ -101,7 +103,9 @@ const Options = (() => {
     get askPermissionsDirectly () { return askPermissionsDirectly },
     set askPermissionsDirectly (v) { askPermissionsDirectly = getValue(v, askPermissionsDirectly) },
     get promptIconUrl () { return promptIconUrl },
-    set promptIconUrl (v) { promptIconUrl = getValue(v, promptIconUrl) }
+    set promptIconUrl (v) { promptIconUrl = getValue(v, promptIconUrl) },
+    get visitsToDisplayPrompt () { return visitsToDisplayPrompt },
+    set visitsToDisplayPrompt (v) { visitsToDisplayPrompt = getValue(v, visitsToDisplayPrompt) }
   }
 })()
 

@@ -28,6 +28,11 @@ const PerfectyPush = (() => {
 
     await ServiceInstaller.removeConflicts()
 
+    if (!hasMinimumVisits()) {
+      Logger.info('Do not show yet. Required visits to display the prompt: ' + Options.visitsToDisplayPrompt)
+      return true
+    }
+
     if (Options.askPermissionsDirectly) {
       await askPermissionsDirectly()
     } else {
@@ -54,6 +59,23 @@ const PerfectyPush = (() => {
     return (Features.isSupported() && Options.enabled)
   }
 
+  /**
+   * Returns if the minimum number of visits has been reached.
+   * In case the permissions have already been asked, it will always be true,
+   * otherwise it will track the number of visits in the Local Storage
+   * @returns {boolean} true if the visitsToDisplayPrompt is reached
+   */
+  const hasMinimumVisits = () => {
+    if (Permission.askedAlready()) {
+      return true
+    }
+
+    const visits = Storage.totalVisits() + 1
+    Storage.setTotalVisits(visits)
+
+    return visits >= Options.visitsToDisplayPrompt
+  }
+
   const drawHtmlControls = () => {
     Logger.info('Drawing controls')
 
@@ -62,7 +84,7 @@ const PerfectyPush = (() => {
   }
 
   const askPermissionsDirectly = async () => {
-    if (!Permission.hasNeverAsked()) {
+    if (Permission.askedAlready()) {
       // if we already have asked for permissions, we don't ask again
       return true
     }

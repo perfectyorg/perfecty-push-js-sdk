@@ -19,7 +19,8 @@ const defaultOptions = {
   loggerVerbose: false,
   hideBellAfterSubscribe: false,
   askPermissionsDirectly: false,
-  unregisterConflictsExpression: ''
+  unregisterConflictsExpression: '',
+  visitsToDisplayPrompt: 0
 }
 
 describe('options', () => {
@@ -75,6 +76,7 @@ describe('options', () => {
     expect(value.hideBellAfterSubscribe).toEqual(expected.hideBellAfterSubscribe)
     expect(value.askPermissionsDirectly).toEqual(expected.askPermissionsDirectly)
     expect(value.unregisterConflictsExpression).toEqual(expected.unregisterConflictsExpression)
+    expect(value.visitsToDisplayPrompt).toEqual(expected.visitsToDisplayPrompt)
     return true
   }
 })

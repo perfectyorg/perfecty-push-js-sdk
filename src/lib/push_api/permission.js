@@ -24,11 +24,14 @@ const Permission = (() => {
     return Notification.permission === 'default'
   }
 
+  const askedAlready = () => !hasNeverAsked()
+
   return {
     askIfNotDenied,
     isGranted,
     isDenied,
-    hasNeverAsked
+    hasNeverAsked,
+    askedAlready
   }
 })()
 
