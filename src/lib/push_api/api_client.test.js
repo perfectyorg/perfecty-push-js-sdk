@@ -74,10 +74,9 @@ describe('when getting a user', () => {
 
 describe('when unregistering the user', () => {
   it('returns true on success', async () => {
-    const response = { result: true }
     fetch.mockImplementationOnce(() => {
       return Promise.resolve({
-        json: () => Promise.resolve(response)
+        ok: () => true
       })
     })
     const result = await ApiClient.unregister('user-uuid-1')

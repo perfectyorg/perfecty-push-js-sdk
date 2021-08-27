@@ -8,7 +8,7 @@ const ApiClient = (() => {
       firstTime = false
     }
 
-    const path = `${Options.serverUrl}/v1/public/users`
+    const path = `${Options.serverUrl}/v1/push/users`
     const bodyContent = JSON.stringify({
       user: pushSubscription,
       user_id: userId,
@@ -35,7 +35,7 @@ const ApiClient = (() => {
   const getUser = async (userId) => {
     Logger.info('Getting the registration status from the server')
 
-    const path = `${Options.serverUrl}/v1/public/users/${userId}`
+    const path = `${Options.serverUrl}/v1/push/users/${userId}`
 
     const body = await fetch(path, {
       method: 'get',
@@ -62,21 +62,21 @@ const ApiClient = (() => {
     Logger.info('Unregistering user in the server')
     Logger.debug(`User: ${userId}`)
 
-    const path = `${Options.serverUrl}/v1/public/users/${userId}/unregister`
+    const path = `${Options.serverUrl}/v1/push/users/${userId}/unregister`
 
-    let response
+    let success = false
     try {
       const body = await fetch(path, {
         method: 'post',
         headers: getHeaders()
       })
-      response = await body.json()
-      Logger.debug('response', response)
+      success = body.ok
     } catch (e) {
       Logger.error('Could not execute the fetch operation', e)
+      return false
     }
 
-    if (response && typeof response.result !== 'undefined') {
+    if (success) {
       Logger.info('The user was unregistered')
       return true
     } else {
