@@ -9,6 +9,8 @@ const Options = (() => {
   let settingsOptIn = 'I want to receive notifications'
   let settingsUpdateError = 'Could not change the preference, please try again'
   let serverUrl = ''
+  let siteId = '00000000-0000-0000-0000-000000000000'
+  let apiKey = ''
   let vapidPublicKey = ''
   let tokenHeader = 'Bearer'
   let token = ''
@@ -34,6 +36,8 @@ const Options = (() => {
     Options.settingsOptIn = custom.settingsOptIn
     Options.settingsUpdateError = custom.settingsUpdateError
     Options.serverUrl = custom.serverUrl
+    Options.siteId = custom.siteId
+    Options.apiKey = custom.apiKey
     Options.vapidPublicKey = custom.vapidPublicKey
     Options.tokenHeader = custom.tokenHeader
     Options.token = custom.token
@@ -71,6 +75,10 @@ const Options = (() => {
     set settingsUpdateError (v) { settingsUpdateError = getValue(v, settingsUpdateError) },
     get serverUrl () { return serverUrl },
     set serverUrl (v) { serverUrl = getValue(v, serverUrl) },
+    get siteId () { return siteId },
+    set siteId (v) { siteId = getValue(v, siteId) },
+    get apiKey () { return apiKey },
+    set apiKey (v) { apiKey = getValue(v, apiKey) },
     get vapidPublicKey () { return vapidPublicKey },
     set vapidPublicKey (v) { vapidPublicKey = getValue(v, vapidPublicKey) },
     get tokenHeader () { return tokenHeader },

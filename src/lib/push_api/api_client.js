@@ -8,7 +8,7 @@ const ApiClient = (() => {
       firstTime = false
     }
 
-    const path = `${Options.serverUrl}/v1/webpush/subscribers`
+    const path = `${Options.serverUrl}/v1/webpush/${Options.siteId}/subscribers`
     const bodyContent = JSON.stringify({
       user: pushSubscription,
       user_id: userId,
@@ -35,7 +35,7 @@ const ApiClient = (() => {
   const getUser = async (userId) => {
     Logger.info('Getting the registration status from the server')
 
-    const path = `${Options.serverUrl}/v1/webpush/subscribers/${userId}`
+    const path = `${Options.serverUrl}/v1/webpush/${Options.siteId}/subscribers/${userId}`
 
     const body = await fetch(path, {
       method: 'get',
@@ -62,7 +62,7 @@ const ApiClient = (() => {
     Logger.info('Unregistering user in the server')
     Logger.debug(`User: ${userId}`)
 
-    const path = `${Options.serverUrl}/v1/webpush/subscribers/${userId}/unregister`
+    const path = `${Options.serverUrl}/v1/webpush/${Options.siteId}/subscribers/${userId}/unregister`
 
     let success = false
     try {

@@ -9,6 +9,8 @@ const defaultOptions = {
   settingsOptIn: 'I want to receive notifications',
   settingsUpdateError: 'Could not change the preference, please try again',
   serverUrl: '',
+  siteId: '00000000-0000-0000-0000-000000000000',
+  apiKey: '',
   vapidPublicKey: '',
   tokenHeader: 'Bearer',
   token: '',
@@ -65,6 +67,8 @@ describe('options', () => {
     expect(value.settingsOptIn).toEqual(expected.settingsOptIn)
     expect(value.settingsUpdateError).toEqual(expected.settingsUpdateError)
     expect(value.serverUrl).toEqual(expected.serverUrl)
+    expect(value.siteId).toEqual(expected.siteId)
+    expect(value.apiKey).toEqual(expected.apiKey)
     expect(value.vapidPublicKey).toEqual(expected.vapidPublicKey)
     expect(value.tokenHeader).toEqual(expected.tokenHeader)
     expect(value.token).toEqual(expected.token)
