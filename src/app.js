@@ -119,6 +119,6 @@ const PerfectyPush = (() => {
 
 export default PerfectyPush
 
-window.onload = () => {
+window.addEventListener('load', () => {
   PerfectyPush.start(window.PerfectyPushOptions)
-}
+})
