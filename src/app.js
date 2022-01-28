@@ -86,17 +86,21 @@ const PerfectyPush = (() => {
   const askPermissionsDirectly = async () => {
     if (Permission.askedAlready()) {
       // if we already have asked for permissions, we don't ask again
-      return true
+      return Permission.isGranted()
     }
 
     await Permission.askIfNotDenied()
-    if (Permission.isGranted()) {
-      Logger.info('User has granted permissions')
-
-      const userId = Storage.userId()
-      await ServiceInstaller.installIfMissing()
-      await Registration.register(userId, true)
+    if (!Permission.isGranted()) {
+      return false
     }
+
+    Logger.info('User has granted permissions')
+
+    const userId = Storage.userId()
+    await ServiceInstaller.installIfMissing()
+    await Registration.register(userId, true)
+
+    return true
   }
 
   const checkInstallation = async () => {
@@ -112,8 +116,35 @@ const PerfectyPush = (() => {
     await Registration.check(Storage.userId(), Storage.optedOut())
   }
 
+  const register = async () => {
+    Options.askPermissionsDirectly = true
+    Storage.setOptedOut(false)
+
+    if (!Permission.isGranted()) {
+      return askPermissionsDirectly()
+    }
+
+    const userId = Storage.userId()
+    await ServiceInstaller.installIfMissing()
+    return Registration.register(userId, true)
+  }
+
+  const unregister = async () => {
+    const userId = Storage.userId()
+    await Registration.unregister(userId)
+    Storage.setOptedOut(true)
+    await ServiceInstaller.removeInstallation()
+  }
+
+  const isRegister = () => {
+    return Permission.isGranted() && Storage.optedOut() === false
+  }
+
   return {
-    start
+    start,
+    register,
+    unregister,
+    isRegister
   }
 })()
 
