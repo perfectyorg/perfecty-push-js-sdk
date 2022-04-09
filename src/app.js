@@ -102,7 +102,7 @@ const PerfectyPush = (() => {
   const checkInstallation = async () => {
     Logger.info('Checking Service Worker installation')
 
-    await ServiceInstaller.removeOldSubscription()
+    await ServiceInstaller.removeOldSubscription(Storage.userId(), Storage.optedOut())
     await ServiceInstaller.installIfMissing()
   }
 

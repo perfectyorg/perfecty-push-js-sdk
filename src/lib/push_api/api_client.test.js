@@ -11,7 +11,7 @@ const pushSubscription = { mockedKey1: 'mockedValue2', mockedKey2: 'mockedValue2
 
 describe('when registering a user', () => {
   it('returns the parsed response on success', async () => {
-    const response = { uuid: 'user-uuid-1', body: { key1: 'value1' } }
+    const response = { id: 'user-uuid-1', body: { key1: 'value1' } }
     fetch.mockImplementationOnce(() => {
       return Promise.resolve({
         json: () => Promise.resolve(response)
@@ -35,7 +35,7 @@ describe('when registering a user', () => {
 
 describe('when getting a user', () => {
   it('returns the user on success', async () => {
-    const response = { uuid: 'user-uuid-1', body: { key1: 'value1' } }
+    const response = { id: 'user-uuid-1', body: { key1: 'value1' } }
     fetch.mockImplementationOnce(() => {
       return Promise.resolve({
         ok: true,

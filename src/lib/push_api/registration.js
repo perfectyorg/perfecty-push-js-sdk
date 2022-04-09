@@ -11,7 +11,7 @@ import Options from './options'
 const Registration = (() => {
   const check = async (userId, optedOut) => {
     Logger.info('Checking user registration')
-    if ((optedOut === false && userId === null) || Storage.shouldRegisterUser()) {
+    if (Storage.shouldRegisterUser()) {
       Logger.info('User should be registered, registering')
       await register(userId)
     } else {
@@ -28,7 +28,7 @@ const Registration = (() => {
       Logger.info('Sending user registration')
       const response = await ApiClient.register(userId, pushSubscription, firstTime)
       if (response !== false) {
-        Storage.setUserId(response.uuid)
+        Storage.setUserId(response.id)
         Storage.setShouldRegisterUser(false)
 
         if (!Options.askPermissionsDirectly) {

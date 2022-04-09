@@ -9,8 +9,8 @@ jest.mock('./service_installer', () => ({
   subscribeToPush: jest.fn(() => ({ mocked: 'test' }))
 }))
 jest.mock('./api_client', () => ({
-  register: jest.fn(() => Promise.resolve({ uuid: 'mocked-uuid' })),
-  getUser: jest.fn(() => Promise.resolve({ uuid: 'mocked-uuid' }))
+  register: jest.fn(() => Promise.resolve({ id: 'mocked-uuid' })),
+  getUser: jest.fn(() => Promise.resolve({ id: 'mocked-uuid' }))
 }))
 jest.mock('../../controls/settings')
 jest.mock('./storage')
@@ -35,12 +35,6 @@ describe('when checking the registration', () => {
     await Registration.check(null, true)
     expect(ServiceInstaller.subscribeToPush).toHaveBeenCalledTimes(0)
     expect(ApiClient.register).toHaveBeenCalledTimes(0)
-  })
-  it('register the user if it is not found (null)', async () => {
-    Storage.userId.mockImplementationOnce(() => null)
-    await Registration.check(null, false)
-    expect(ServiceInstaller.subscribeToPush).toHaveBeenCalledTimes(1)
-    expect(ApiClient.register).toHaveBeenCalledTimes(1)
   })
   it('register the user if it is not found (shouldRegisterUser)', async () => {
     Storage.shouldRegisterUser.mockImplementationOnce(() => true)

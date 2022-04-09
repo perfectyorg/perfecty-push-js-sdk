@@ -10,8 +10,8 @@ const ApiClient = (() => {
 
     const path = `${Options.serverUrl}/v1/webpush/${Options.siteId}/subscribers`
     const bodyContent = JSON.stringify({
-      user: pushSubscription,
-      user_id: userId,
+      id: userId,
+      push_subscription: pushSubscription,
       first_time: firstTime
     })
 
@@ -23,7 +23,7 @@ const ApiClient = (() => {
     const response = await body.json()
     Logger.debug('response', response)
 
-    if (response && typeof response.uuid !== 'undefined') {
+    if (response && typeof response.id !== 'undefined') {
       Logger.info('The user was registered successfully')
       return response
     } else {
@@ -45,7 +45,7 @@ const ApiClient = (() => {
       const user = await body.json()
       Logger.debug('response', user)
 
-      if (user && typeof user.uuid !== 'undefined') {
+      if (user && typeof user.id !== 'undefined') {
         Logger.info('The user was found')
         return user
       } else {

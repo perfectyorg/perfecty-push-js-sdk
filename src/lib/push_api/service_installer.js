@@ -11,11 +11,16 @@ const ServiceInstaller = (() => {
   const TYPE_PERFECTY = 3
   const TYPE_OLD_SCOPE = 4
 
-  const removeOldSubscription = async () => {
-    const userId = Storage.userId()
-    if (userId !== null) {
+  const removeOldSubscription = async (userId, optedOut) => {
+    if (optedOut === false && userId === null) {
+      // the user is supposed to be registered but somehow has not a `userId`
+      Logger.info('Inconsistent local data, removing')
+      await removeInstallation()
+    } else if (userId !== null) {
+      // check if the user exists in the server
       const user = await ApiClient.getUser(userId)
       if (user === null) {
+        Logger.info('User does not exist in the server')
         await removeInstallation()
       }
     }
@@ -28,6 +33,7 @@ const ServiceInstaller = (() => {
       await swRegistration.unregister()
     }
     Storage.setUserId(null)
+    Storage.setShouldRegisterUser(true)
   }
 
   const removeConflicts = async () => {

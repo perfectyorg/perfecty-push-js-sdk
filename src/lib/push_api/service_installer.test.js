@@ -6,7 +6,7 @@ import Navigator from './navigator'
 import ServiceInstaller from './service_installer'
 
 jest.mock('./api_client', () => ({
-  getUser: jest.fn(() => Promise.resolve({ uuid: 'user-uuid' }))
+  getUser: jest.fn(() => Promise.resolve({ id: 'user-uuid' }))
 }))
 jest.mock('./storage')
 jest.mock('./navigator')
@@ -17,6 +17,7 @@ let unregisterConflictsExpressionSpy
 beforeEach(() => {
   ApiClient.getUser.mockClear()
   Navigator.serviceWorker.mockClear()
+  Storage.setShouldRegisterUser.mockClear()
   unregisterConflictsSpy = jest.spyOn(Options, 'unregisterConflicts', 'get')
   unregisterConflictsExpressionSpy = jest.spyOn(Options, 'unregisterConflictsExpression', 'get')
   unregisterConflictsSpy.mockImplementation(() => false)
@@ -25,7 +26,7 @@ beforeEach(() => {
 
 describe('when removing installations', () => {
   it('is unregistered for old user subscriptions', async () => {
-    const mockUnregister = jest.fn().mockReturnValue(Promise.resolve(true))
+    const mockUnregister = jest.fn().mockReturnValueOnce(Promise.resolve(true))
     const serviceWorkerRegistration = {
       active: {
         scriptURL: 'http://mytest.com'
@@ -36,13 +37,35 @@ describe('when removing installations', () => {
     Navigator.serviceWorker.mockImplementationOnce(() => ({
       getRegistration: mockGetRegistration
     }))
-    Storage.userId.mockImplementationOnce(() => 'existing-user-uuid')
+    Storage.setShouldRegisterUser.mockReturnValueOnce(() => null)
     ApiClient.getUser.mockImplementationOnce(() => Promise.resolve(null))
 
-    await ServiceInstaller.removeOldSubscription()
+    await ServiceInstaller.removeOldSubscription('existing-user-uuid', false)
 
     expect(mockGetRegistration).toHaveBeenCalledTimes(1)
     expect(mockUnregister).toHaveBeenCalledTimes(1)
+    expect(Storage.setShouldRegisterUser).toHaveBeenCalledTimes(1)
+  })
+
+  it('is unregistered for data inconsistencies', async () => {
+    const mockUnregister = jest.fn().mockReturnValueOnce(Promise.resolve(true))
+    const serviceWorkerRegistration = {
+      active: {
+        scriptURL: 'http://mytest.com'
+      },
+      unregister: mockUnregister
+    }
+    const mockGetRegistration = jest.fn().mockReturnValueOnce(Promise.resolve(serviceWorkerRegistration))
+    Storage.setShouldRegisterUser.mockReturnValueOnce(() => null)
+    Navigator.serviceWorker.mockImplementationOnce(() => ({
+      getRegistration: mockGetRegistration
+    }))
+
+    await ServiceInstaller.removeOldSubscription(null, false)
+
+    expect(mockGetRegistration).toHaveBeenCalledTimes(1)
+    expect(mockUnregister).toHaveBeenCalledTimes(1)
+    expect(Storage.setShouldRegisterUser).toHaveBeenCalledTimes(1)
   })
 
   it('throws exception in old subscriptions error', async () => {
@@ -50,7 +73,7 @@ describe('when removing installations', () => {
     ApiClient.getUser.mockImplementationOnce(() => { throw new Error('Error!') })
 
     const t = async () => {
-      await ServiceInstaller.removeOldSubscription()
+      await ServiceInstaller.removeOldSubscription('existing-user-uuid', false)
     }
 
     await expect(t).rejects.toThrow(new Error('Error!'))
@@ -63,7 +86,7 @@ describe('when removing installations', () => {
     }))
 
     Storage.setUserId('user-uuid')
-    await ServiceInstaller.removeOldSubscription()
+    await ServiceInstaller.removeOldSubscription('existing-user-uuid', false)
     Storage.setUserId(null)
 
     expect(mockGetRegistration).toHaveBeenCalledTimes(0)

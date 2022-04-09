@@ -21,7 +21,7 @@ jest.mock('./lib/push_api/features', () => ({
   isSupported: jest.fn(() => true)
 }))
 jest.mock('./lib/push_api/registration', () => ({
-  check: jest.fn(() => Promise.resolve({ uuid: 'mocked-uuid' })),
+  check: jest.fn(() => Promise.resolve({ id: 'mocked-uuid' })),
   register: jest.fn(() => true)
 }))
 jest.mock('./lib/push_api/service_installer')
