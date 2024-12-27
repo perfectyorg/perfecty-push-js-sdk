@@ -51,7 +51,7 @@ describe('when the control is created', () => {
     console.log(document.body.innerHTML)
     const expectedHTML = '<div class="perfecty-push-settings-container" style="display: block;">  <div id="perfecty-push-settings-form" style="display: none;">    <div>Notifications preferences</div>    <input type="checkbox" id="perfecty-push-settings-subscribed" checked="checked">    <label for="perfecty-push-settings-subscribed">I want to receive notifications</label>    <div id="perfecty-push-settings-notification"></div>  </div>  <button id="perfecty-push-settings-open" title="Notifications preferences" aria-label="Notifications preferences">    <svg aria-hidden="true" focusable="false" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M224 512c35.32 0 63.97-28.65 63.97-64H160.03c0 35.35 28.65 64 63.97 64zm215.39-149.71c-19.32-20.76-55.47-51.99-55.47-154.29 0-77.7-54.48-139.9-127.94-155.16V32c0-17.67-14.32-32-31.98-32s-31.98 14.33-31.98 32v20.84C118.56 68.1 64.08 130.3 64.08 208c0 102.3-36.15 133.53-55.47 154.29-6 6.45-8.66 14.16-8.61 21.71.11 16.4 12.98 32 32.1 32h383.8c19.12 0 32-15.6 32.1-32 .05-7.55-2.61-15.27-8.61-21.71z"></path></svg>  </button></div>'
     expect(document.body.innerHTML).toEqual(expectedHTML)
-    expect(formIsShown()).toEqual(false)
+    expect(formIsShown()).toBe(false)
   })
 
   it('is opened and no permissions asked yet, opens the dialog message', async () => {
@@ -60,7 +60,7 @@ describe('when the control is created', () => {
     await simulateClickOnOpen()
     const notificationControl = document.getElementById('perfecty-push-settings-notification')
     expect(DialogControl.show).toHaveBeenCalledTimes(1)
-    expect(notificationControl.textContent).toEqual('')
+    expect(notificationControl.textContent).toBe('')
   })
 
   it('is hidden when hideBellAfterSubscribe is true', () => {
@@ -77,9 +77,9 @@ describe('when the control is created', () => {
     Permission.hasNeverAsked.mockImplementationOnce(() => false)
     SettingsControl.draw()
 
-    expect(formIsShown()).toEqual(false)
+    expect(formIsShown()).toBe(false)
     await simulateClickOnOpen()
-    expect(formIsShown()).toEqual(true)
+    expect(formIsShown()).toBe(true)
   })
 })
 
@@ -94,7 +94,7 @@ describe('when the subscribed check', () => {
     const notificationControl = document.getElementById('perfecty-push-settings-notification')
     expect(ApiClient.unregister).toHaveBeenCalledTimes(1)
     expect(ServiceInstaller.removeInstallation).toHaveBeenCalledTimes(1)
-    expect(notificationControl.textContent).toEqual('')
+    expect(notificationControl.textContent).toBe('')
   })
 
   it('is checked and there\'s an error, show message', async () => {
@@ -109,7 +109,7 @@ describe('when the subscribed check', () => {
     expect(ApiClient.register).toHaveBeenCalledTimes(1)
     expect(ServiceInstaller.subscribeToPush).toHaveBeenCalledTimes(1)
     expect(Storage.setUserId).toHaveBeenCalledTimes(0)
-    expect(notificationControl.textContent).toEqual('Could not change the preference, please try again')
+    expect(notificationControl.textContent).toBe('Could not change the preference, please try again')
   })
 
   it('is unchecked and there\'s an error, show message', async () => {
@@ -122,7 +122,7 @@ describe('when the subscribed check', () => {
     const notificationControl = document.getElementById('perfecty-push-settings-notification')
     expect(ApiClient.unregister).toHaveBeenCalledTimes(1)
     expect(ServiceInstaller.removeInstallation).toHaveBeenCalledTimes(0)
-    expect(notificationControl.textContent).toEqual('Could not change the preference, please try again')
+    expect(notificationControl.textContent).toBe('Could not change the preference, please try again')
   })
 
   it('is checked and permissions are granted, register the user again', async () => {
@@ -138,7 +138,7 @@ describe('when the subscribed check', () => {
     expect(Storage.setShouldRegisterUser).toHaveBeenCalledTimes(1)
     expect(ApiClient.register).toHaveBeenCalledTimes(1)
     expect(ServiceInstaller.installIfMissing).toHaveBeenCalledTimes(1)
-    expect(notificationControl.textContent).toEqual('')
+    expect(notificationControl.textContent).toBe('')
   })
 })
 

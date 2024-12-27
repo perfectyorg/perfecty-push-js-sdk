@@ -37,13 +37,13 @@ describe('when the dialog is created', () => {
 
     const expectedHTML = '<div class="site perfecty-push-dialog-container" id="perfecty-push-dialog-container" style="display: none;">  <div class="perfecty-push-dialog-box">    <div class="perfecty-push-dialog-form">      <div class="perfecty-push-dialog-title">Do you want to receive notifications?</div>      <div class="perfecty-push-dialog-buttons">        <button id="perfecty-push-dialog-cancel" type="button" class="button secondary">Not now</button>        <button id="perfecty-push-dialog-subscribe" type="button" class="button primary">Continue</button>       </div>    </div>  </div></div>'
     expect(document.body.innerHTML).toEqual(expectedHTML)
-    expect(isShown()).toEqual(false)
+    expect(isShown()).toBe(false)
   })
 
   it('is shown to unsubscribed users', () => {
     DialogControl.draw()
 
-    expect(isShown()).toEqual(true)
+    expect(isShown()).toBe(true)
   })
 
   it('is hidden to unsubscribed users and already asked to subscribe', () => {
@@ -51,24 +51,24 @@ describe('when the dialog is created', () => {
 
     DialogControl.draw()
 
-    expect(isShown()).toEqual(false)
+    expect(isShown()).toBe(false)
   })
 
   it('hides when cancel is clicked', async () => {
     DialogControl.draw()
 
-    expect(isShown()).toEqual(true)
+    expect(isShown()).toBe(true)
     await simulateClickOnCancel()
-    expect(isShown()).toEqual(false)
+    expect(isShown()).toBe(false)
     expect(Storage.setHasAskedNotifications).toHaveBeenCalledTimes(1)
   })
 
   it('register user and install service worker when subscribe is clicked and permission is granted', async () => {
     DialogControl.draw()
 
-    expect(isShown()).toEqual(true)
+    expect(isShown()).toBe(true)
     await simulateClickOnSubscribe()
-    expect(isShown()).toEqual(false)
+    expect(isShown()).toBe(false)
     expect(Storage.setHasAskedNotifications).toHaveBeenCalledTimes(1)
     expect(Permission.askIfNotDenied).toHaveBeenCalledTimes(1)
     expect(Registration.register).toHaveBeenCalledTimes(1)

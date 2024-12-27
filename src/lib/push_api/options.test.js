@@ -32,7 +32,7 @@ describe('options', () => {
   })
 
   it('create', () => {
-    expect(areEqual(Options, defaultOptions)).toEqual(true)
+    expect(areEqual(Options, defaultOptions)).toBe(true)
   })
 
   it('create with custom args', () => {
@@ -42,7 +42,7 @@ describe('options', () => {
     Options.init(custom)
 
     const expected = { ...defaultOptions, dialogTitle: 'Test title' }
-    expect(areEqual(Options, expected)).toEqual(true)
+    expect(areEqual(Options, expected)).toBe(true)
   })
 
   it('create with custom args, ignore unknown', () => {
@@ -53,7 +53,7 @@ describe('options', () => {
     Options.init(custom)
 
     const expected = { ...defaultOptions, dialogTitle: 'Test title' }
-    expect(areEqual(Options, expected)).toEqual(true)
+    expect(areEqual(Options, expected)).toBe(true)
   })
 
   function areEqual (value, expected) {

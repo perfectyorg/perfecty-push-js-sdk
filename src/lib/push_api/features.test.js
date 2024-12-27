@@ -17,7 +17,7 @@ it('are present', () => {
   }))
 
   const res = Features.isSupported()
-  expect(res).toEqual(true)
+  expect(res).toBe(true)
 })
 
 it('some are not present', () => {
@@ -27,7 +27,7 @@ it('some are not present', () => {
   }))
 
   const res = Features.isSupported()
-  expect(res).toEqual(false)
+  expect(res).toBe(false)
 })
 
 it('none are present', () => {
@@ -36,5 +36,5 @@ it('none are present', () => {
   }))
 
   const res = Features.isSupported()
-  expect(res).toEqual(false)
+  expect(res).toBe(false)
 })
