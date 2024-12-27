@@ -15,7 +15,10 @@ module.exports = {
     path: path.resolve(__dirname, 'dist'),
     filename: '[name].min.js'
   },
-  plugins: [new ESLintPlugin()],
+  plugins: [new ESLintPlugin({
+    overrideConfigFile: path.resolve(__dirname, "eslint.config.mjs"),
+    configType: "flat",
+  })],
   module: {
     rules: [
       {
