@@ -2,7 +2,14 @@ const path = require('path')
 
 module.exports = {
   entry: {
-    'perfecty-push-sdk': './src/app.js',
+    'perfecty-push-sdk': {
+      import: './src/app.js',
+      library: {
+        name: 'PerfectyPush',
+        type: 'var',
+        export: 'default'
+      }
+    },
     'perfecty-push-sw': './src/service-worker.js'
   },
   mode: 'production',
