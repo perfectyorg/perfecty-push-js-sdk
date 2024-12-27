@@ -29,7 +29,7 @@ describe('when registering a user', () => {
       })
     })
     const result = await ApiClient.register(pushSubscription)
-    expect(result).toEqual(false)
+    expect(result).toBe(false)
   })
 })
 
@@ -80,7 +80,7 @@ describe('when unregistering the user', () => {
       })
     })
     const result = await ApiClient.unregister('user-uuid-1')
-    expect(result).toEqual(true)
+    expect(result).toBe(true)
   })
 
   it('returns false on failures', async () => {
@@ -91,7 +91,7 @@ describe('when unregistering the user', () => {
       })
     })
     const result = await ApiClient.unregister('user-uuid-1')
-    expect(result).toEqual(false)
+    expect(result).toBe(false)
   })
 
   it('returns false on exception', async () => {
@@ -101,6 +101,6 @@ describe('when unregistering the user', () => {
       })
     })
     const result = await ApiClient.unregister('user-uuid-1')
-    expect(result).toEqual(false)
+    expect(result).toBe(false)
   })
 })

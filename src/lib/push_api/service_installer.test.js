@@ -170,7 +170,7 @@ describe('when installing', () => {
 
     const result = await ServiceInstaller.installIfMissing()
 
-    expect(result).toEqual(false)
+    expect(result).toBe(false)
     expect(mockRegister).toHaveBeenCalledTimes(0)
     Navigator.serviceWorker.mockReset()
   })
